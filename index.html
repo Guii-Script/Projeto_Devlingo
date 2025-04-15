@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="devlingo-login.css">
-    <link rel="icon" href="imagem/Kiwi tá certo.png" type="image/png">
-    <title>DevLingo</title>
+    <title>Dev_Lingo</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <div class="container">
-        <div class="imagem">
-            <img class="imagem_login" src="imagem/wallpeper_login.jpg" alt="Imagem" />
+    <main class="content">
+        <div class="col1">
+            <img class="pato" src="imagens/pato1.png" alt="pato" height="80">
+            <h2 class="titulo">Dev_Lingo</h2>
+            <p class="texto">Preencha os campos abaixo <br> para acessar sua conta</p>
+            <h2 class="subtitulo">Faça seu login</h2>
+            <form class="login">
+                <label class="rotulo">Email</label>
+                <input type="text" class="campo-texto">
+                <label class="rotulo">Senha</label>
+                <input type="text" class="campo-texto">
+            </form>
+            <a href="loading.html" class="botoes">
+                <button class="botao-entrar">ENTRAR</button>
+                <button class="botao-google">Continuar com Google</button>
+            </a>
+            <a href="cadastro.html" class="cadastro">Primeiro Acesso</a>
+            <a href="#" class="cadastro2">Esqueceu sua Senha?</a>
         </div>
-        <div class="formulario">
-            <label for="email">E-mail:</label>
-            <input type="email" id="email" name="email"><br><br>
-            
-            <label for="senha">Senha:</label>
-            <input type="password" id="senha" name="senha"><br><br>
-            
-            <button type="submit">Enviar</button>
+        <div class="col2">
+            <img class="bg2" src="imagens/bg1.png" alt="background">
         </div>
-    </div>
+    </main>
+    <script src="app.js"></script>
 </body>
+
 </html>
