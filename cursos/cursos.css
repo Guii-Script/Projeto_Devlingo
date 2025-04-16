@@ -1,0 +1,129 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  body {
+    background-color: #d4f5fa;
+    color: #0f2b40;
+  }
+  
+  header {
+    background-color: #0f2b40;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+  }
+  
+  .barra-pesquisa {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: none;
+    width: 250px;
+    outline: none;
+  }
+  
+  nav a {
+    color: white;
+    margin: 0 1rem;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .container-perfil {
+    display: flex;
+    padding: 2rem;
+  }
+  
+  .menu-perfil {
+    background-color: #e5f8fc;
+    padding: 2rem;
+    width: 300px;
+    border-right: 1px solid #ccc;
+    text-align: center;
+  }
+  
+  .menu-perfil img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+  }
+  
+  .menu-perfil h2 {
+    margin: 0.5rem 0;
+  }
+  
+  .menu-perfil blockquote {
+    font-size: 0.9rem;
+    color: #444;
+    margin-bottom: 2rem;
+  }
+  
+  .grupo-formulario {
+    text-align: left;
+    margin-bottom: 1.5rem;
+  }
+  
+  .grupo-formulario label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  
+  .etiqueta-editor {
+    font-size: 0.8rem;
+    color: #888;
+    margin-left: 0.5rem;
+  }
+  
+  input[type=\"text\"],
+  textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    font-size: 1rem;
+    resize: none;
+  }
+  
+  .botao-salvar {
+    background-color: #08415c;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  .botao-salvar:hover {
+    background-color: #062d43;
+  }
+  
+  .deletar-conta {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: #555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .deletar-conta:hover {
+    color: red;
+  }
+  
+  .conteudo-perfil {
+    flex: 1;
+    padding: 2rem;
+  }

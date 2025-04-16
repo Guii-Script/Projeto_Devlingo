@@ -1,0 +1,37 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  body {
+    background-color: #d4f5fa;
+    color: #0f2b40;
+  }
+  
+  header {
+    background-color: #0f2b40;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+  }
+  
+  .barra-pesquisa {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: none;
+    width: 250px;
+    outline: none;
+  }
+  
+  nav a {
+    color: white;
+    margin: 0 1rem;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+ 
