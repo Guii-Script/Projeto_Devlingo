@@ -1,37 +1,138 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', sans-serif;
-  }
-  
-  body {
-    background-color: #d4f5fa;
-    color: #0f2b40;
-  }
-  
-  header {
-    background-color: #0f2b40;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-  }
-  
-  .barra-pesquisa {
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    border: none;
-    width: 250px;
-    outline: none;
-  }
-  
-  nav a {
-    color: white;
-    margin: 0 1rem;
-    text-decoration: none;
-    font-weight: 600;
-  }
-  
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
  
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+ 
+body {
+  color: #0f2b40;
+  animation: fadeIn 1s ease-in;
+  background-color: #01080D;
+}
+ 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+ 
+header {
+  background-color: #0f2b40;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  animation: slideDown 0.8s ease-out;
+}
+ 
+@keyframes slideDown {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+ 
+.barra-pesquisa {
+  border: 2px solid #2EF2AA;
+  border-radius: 90px;
+  width: 300px;
+  height: 40px;
+  background-color: transparent;
+  padding: 0 1rem;
+  transition: all 0.3s ease;
+  margin-left: 25px;
+  color: white;
+}
+ 
+.barra-pesquisa:focus {
+  outline: none;
+  box-shadow: 0 0 10px #2EF2AA;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+ 
+input::placeholder {
+  text-align: center;
+  font-family: "Comfortaa";
+  font-size: 16px;
+  font-weight: normal;
+  opacity: 0.8;
+}
+ 
+nav a {
+  color: white;
+  margin: 0 1rem;
+  text-decoration: none;
+  font-weight: 600;
+  position: relative;
+  transition: color 0.3s ease;
+}
+ 
+nav a::after {
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  background: #2EF2AA;
+  bottom: -4px;
+  left: 0;
+  transition: width 0.3s ease;
+}
+ 
+nav a:hover::after {
+  width: 100%;
+}
+ 
+nav a:hover {
+  color: #2EF2AA;
+}
+
+.botao-trilha {
+  color: white;
+  padding: 0.8rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: left;
+  background-color: #113652;
+}
+
+.etapa {
+  width: 60px;
+  height: 60px;
+  background-color: #264a64;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.etapa-concluida {
+  background-color: #22d3ee;
+  color: #0f2b40;
+}
+
+.missao {
+  background-color: #132e4d;
+  padding: 1rem;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.barra-progresso {
+  background-color: #264a64;
+  border-radius: 20px;
+  height: 20px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.barra-preenchida {
+  background: linear-gradient(90deg, #fbbf24, #f97316);
+  height: 100%;
+  text-align: center;
+  color: black;
+  font-weight: bold;
+}
