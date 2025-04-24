@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devlingo - Trilhas</title>
+  <link rel="stylesheet" href="trilhas.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <input type="text" class="barra-pesquisa" placeholder="O Que gostaria de aprender?">
+    <nav>
+      <a href="#">CURSOS</a>
+      <a href="#">PERFIL</a>
+      <a href="#">QUIZ</a>
+      <img src="https://i.imgur.com/W8yZNOX.png" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; margin-left: 1rem;">
+    </nav>
+  </header>
+
+  <div style="display: flex; height: calc(100vh - 80px); background-color: #01080D; color: white;">
+    <!-- Coluna da Esquerda -->
+    <aside style="width: 250px; padding: 2rem 1rem; display: flex; flex-direction: column; gap: 1rem; text-align: center; background-color: #01080D;">
+      <h2 style="color: #00ffa6; font-size: 1.5rem; margin-bottom: 1rem;">Dev_lingo</h2>
+      <button class="botao-trilha" onclick="abrirTrilha('C#')">Trilha C#</button>
+      <button class="botao-trilha" onclick="abrirTrilha('HTML')">Trilha HTML</button>
+      <button class="botao-trilha" onclick="abrirTrilha('PHP')">Trilha PHP</button>
+      <button class="botao-trilha" onclick="abrirTrilha('JavaScript')">Trilha JavaScript</button>
+      <button class="botao-trilha" onclick="abrirTrilha('Database')">Trilha Database</button>
+    </aside>
+
+    <!-- Conteúdo -->
+    <main style="flex-grow: 1; padding: 2rem; display: flex; justify-content: space-between;">
+      <section id="conteudoTrilha" style="flex-grow: 1; text-align: center;"></section>
+
+      <!-- Missões -->
+      <section style="width: 300px; display: flex; flex-direction: column; gap: 2rem;">
+        <div class="missao">
+          <div>Missões diárias</div>
+          <p>Conclua uma lição</p>
+          <div class="barra-progresso">
+            <div id="barraDiaria" style="width: 0%;" class="barra-preenchida">0 / 1</div>
+          </div>
+        </div>
+        <div class="missao">
+          <div>Missões semanais</div>
+          <p>Complete uma trilha</p>
+          <div class="barra-progresso">
+            <div id="barraSemanal" style="width: 0%;" class="barra-preenchida">0 / 5</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="trilhas.js"></script>
+</body>
+</html>

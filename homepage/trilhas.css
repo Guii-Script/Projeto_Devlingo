@@ -90,12 +90,16 @@ nav a:hover {
 .botao-trilha {
   color: white;
   padding: 0.8rem 1rem;
+  margin-bottom: 40px;
   border: none;
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
   text-align: left;
   background-color: #113652;
+  width: 220px;
+  height: 70px;
+  margin-left: 25px;
 }
 
 .etapa {
