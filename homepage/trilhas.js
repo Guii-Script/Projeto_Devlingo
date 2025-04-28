@@ -1,142 +1,237 @@
-let progressoDiario = 0;
-let progressoSemanal = 0;
-
 const trilhas = {
-  "C#": [
-    {
-      pergunta: "Qual palavra-chave usamos para declarar uma variável em C#?",
-      opcoes: ["var", "int", "let", "const"],
-      correta: 0
-    },
-    {
-      pergunta: "Qual é o tipo de dado usado para texto em C#?",
-      opcoes: ["char", "string", "text", "String"],
-      correta: 1
-    },
-    {
-      pergunta: "Como iniciamos um loop em C#?",
-      opcoes: ["for i=0", "foreach", "loop", "repeat"],
-      correta: 1
-    },
-    {
-      pergunta: "Qual símbolo usamos para comentar uma linha?",
-      opcoes: ["//", "#", "--", "/*"],
-      correta: 0
-    },
-    {
-      pergunta: "C# é uma linguagem...",
-      opcoes: ["Interpretada", "Compilada", "Script", "Binária"],
-      correta: 1
-    }
-  ],
-  // Adicione mais trilhas aqui...
+  'C#': {
+    nome: 'Trilha C#',
+    etapas: ['Introdução ao C#', 'Sintaxe Básica', 'POO em C#', 'ASP.NET Core', 'APIs REST com C#']
+  },
+  'HTML': {
+    nome: 'Trilha HTML',
+    etapas: ['Estrutura HTML', 'Formulários', 'Semântica', 'Acessibilidade', 'Boas práticas']
+  },
+  'PHP': {
+    nome: 'Trilha PHP',
+    etapas: ['Introdução ao PHP', 'Sintaxe PHP', 'Banco de Dados', 'PHP Avançado', 'Boas práticas']
+  },
+  'JavaScript': {
+    nome: 'Trilha JavaScript',
+    etapas: ['Variáveis e Tipos', 'Funções', 'DOM', 'Eventos', 'APIs']
+  },
+  'Database': {
+    nome: 'Trilha Database',
+    etapas: ['Modelagem de Dados', 'SQL Básico', 'Consultas Avançadas', 'Stored Procedures', 'Otimização']
+  }
 };
 
-let respostasUsuario = [];
-let indiceQuestao = 0;
-let trilhaAtual = "";
+let etapaAtual = 0;
+let etapasTotais = 0;
+let trilhaAtual = '';
 
-function abrirTrilha(nome) {
-  trilhaAtual = nome;
-  respostasUsuario = new Array(trilhas[nome].length).fill(null);
-  indiceQuestao = 0;
-  renderizarQuestao();
-}
-
-function renderizarQuestao() {
-  const questao = trilhas[trilhaAtual][indiceQuestao];
-  const conteudo = document.getElementById("conteudoTrilha");
-
-  let opcoesHTML = questao.opcoes.map((opcao, i) => `
-    <label style="display:block; background-color: #113652; margin: 0.5rem 0; padding: 0.7rem; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;"
-      class="${respostasUsuario[indiceQuestao] === i ? 'etapa-concluida' : ''}">
-      <input type="radio" name="opcao" value="${i}" ${respostasUsuario[indiceQuestao] === i ? 'checked' : ''} style="margin-right: 10px;">
-      ${opcao}
-    </label>
-  `).join("");
-
+function abrirTrilha(trilha) {
+  trilhaAtual = trilha;
+  const trilhaSelecionada = trilhas[trilha];
+  const conteudo = document.getElementById('conteudoTrilha');
+  
   conteudo.innerHTML = `
-    <div style="background-color: #122b44; padding: 1.5rem; border-radius: 20px; font-weight: bold; margin-bottom: 1rem; font-size: 1.5rem;">
-      ${trilhaAtual.toUpperCase()} - QUESTÃO ${indiceQuestao + 1}
-    </div>
-    <div style="margin-bottom: 1rem; font-size: 1.2rem;">${questao.pergunta}</div>
-    <form id="formQuestao">${opcoesHTML}</form>
-    <div style="margin-top: 1rem;">
-      ${indiceQuestao > 0 ? '<button onclick="anterior()" class="botao-trilha" style="margin-right: 1rem;">Anterior</button>' : ''}
-      ${indiceQuestao < trilhas[trilhaAtual].length - 1 
-        ? '<button onclick="proxima()" class="botao-trilha">Próxima</button>'
-        : '<button onclick="finalizar()" class="botao-trilha">Finalizar</button>'
-      }
-    </div>
+    <h2 style="color: #2EF2AA; margin-bottom: 2rem; font-size: 2rem;">${trilhaSelecionada.nome}</h2>
+    <div id="etapasContainer" style="display: flex; flex-direction: column; align-items: center; gap: 2rem;"></div>
+    <button id="botaoProximaEtapa" style="margin-top: 2rem; padding: 1rem 2rem; border: none; border-radius: 10px; background: #2EF2AA; color: #0f2b40; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s;">Começar</button>
   `;
+
+  etapaAtual = 0;
+  etapasTotais = trilhaSelecionada.etapas.length;
+
+  const botao = document.getElementById('botaoProximaEtapa');
+  botao.addEventListener('click', avancarEtapa);
 }
 
-function proxima() {
-  salvarResposta();
-  if (indiceQuestao < trilhas[trilhaAtual].length - 1) {
-    indiceQuestao++;
-    renderizarQuestao();
-  }
-}
-
-function anterior() {
-  salvarResposta();
-  if (indiceQuestao > 0) {
-    indiceQuestao--;
-    renderizarQuestao();
-  }
-}
-
-function salvarResposta() {
-  const form = document.getElementById("formQuestao");
-  const selecionada = form.opcao?.value;
-  if (selecionada !== undefined) {
-    respostasUsuario[indiceQuestao] = parseInt(selecionada);
-  }
-}
-
-function finalizar() {
-  salvarResposta();
-  const questoes = trilhas[trilhaAtual];
-  const todasCorretas = respostasUsuario.every((resp, i) => resp === questoes[i].correta);
-
-  const conteudo = document.getElementById("conteudoTrilha");
-
-  if (todasCorretas) {
-    conteudo.innerHTML = `<div style="font-size: 2rem; color: #00ffa6; padding: 2rem; border-radius: 20px; background-color: #122b44;">Parabéns! Você concluiu a trilha com sucesso 🎉</div>`;
+function avancarEtapa() {
+  const container = document.getElementById('etapasContainer');
+  const trilhaSelecionada = trilhas[trilhaAtual];
+  
+  if (etapaAtual < etapasTotais) {
+    // Criar etapa animada
+    const etapa = document.createElement('div');
+    etapa.className = 'etapa';
+    etapa.textContent = etapaAtual + 1;
+    etapa.style.animation = 'pop 0.4s ease';
     
-    if (progressoDiario < 1) {
-      progressoDiario++;
-      document.getElementById("barraDiaria").style.width = "100%";
-      document.getElementById("barraDiaria").textContent = "1 / 1";
-    }
+    const descricao = document.createElement('p');
+    descricao.textContent = trilhaSelecionada.etapas[etapaAtual];
+    descricao.style.marginTop = '0.5rem';
+    descricao.style.fontSize = '1.1rem';
 
-    if (progressoSemanal < 5) {
-      progressoSemanal++;
-      let porcentagem = (progressoSemanal / 5) * 100;
-      document.getElementById("barraSemanal").style.width = porcentagem + "%";
-      document.getElementById("barraSemanal").textContent = `${progressoSemanal} / 5`;
-    }
+    const bloco = document.createElement('div');
+    bloco.style.display = 'flex';
+    bloco.style.flexDirection = 'column';
+    bloco.style.alignItems = 'center';
+    bloco.style.justifyContent = 'center';
+    bloco.appendChild(etapa);
+    bloco.appendChild(descricao);
 
-  } else {
-    conteudo.innerHTML = `
-      <div style="font-size: 2rem; color: #ff5f5f; padding: 2rem; background-color: #1a1a1a; border-radius: 20px; animation: shake 0.4s;">
-        Algumas respostas estão incorretas 😢<br>Tente novamente!
-      </div>
-    `;
-    setTimeout(() => abrirTrilha(trilhaAtual), 1800);
+    container.appendChild(bloco);
+
+    etapaAtual++;
+    atualizarMissoes();
+
+    if (etapaAtual === etapasTotais) {
+      const botao = document.getElementById('botaoProximaEtapa');
+      botao.textContent = 'Trilha Completa!';
+      botao.disabled = true;
+      botao.style.background = 'gray';
+      botao.style.cursor = 'not-allowed';
+    }
   }
 }
 
-// Animação shake (adicione no seu CSS)
-const estiloShake = document.createElement("style");
-estiloShake.innerHTML = `
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
+function atualizarMissoes() {
+  // Atualizar barra de progresso diária (1 aula = 100%)
+  const diaria = document.getElementById('barraDiaria');
+  diaria.style.width = '100%';
+  diaria.textContent = '1 / 1';
+
+  // Atualizar barra de progresso semanal (1 trilha = 5 etapas)
+  const semanal = document.getElementById('barraSemanal');
+  const progressoSemanal = Math.round((etapaAtual / etapasTotais) * 100);
+  semanal.style.width = `${progressoSemanal}%`;
+  semanal.textContent = `${etapaAtual} / ${etapasTotais}`;
+}
+
+// Pequena animação para "pop" quando adiciona etapa
+const style = document.createElement('style');
+style.innerHTML = `
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 `;
-document.head.appendChild(estiloShake);
+document.head.appendChild(style);
+
+
+/*
+const trilhas = {
+  'C#': {
+    nome: 'Trilha C#',
+    atividades: [
+      {
+        titulo: 'Introdução ao C#',
+        perguntas: [
+          { pergunta: 'Qual extensão de arquivos C#?', opcoes: ['.js', '.cs', '.php', '.html'], correta: 1 },
+          { pergunta: 'Qual palavra-chave para variável em C#?', opcoes: ['var', 'let', 'const', 'def'], correta: 0 },
+          { pergunta: 'Qual é um tipo primitivo em C#?', opcoes: ['integer', 'bool', 'string', 'char'], correta: 1 },
+          { pergunta: 'Qual estrutura condicional existe em C#?', opcoes: ['switch', 'choose', 'select', 'option'], correta: 0 },
+          { pergunta: 'Para que serve o namespace?', opcoes: ['Controlar classes', 'Comentar', 'Ignorar erros', 'Importar CSS'], correta: 0 },
+        ]
+      },
+      {
+        titulo: 'Sintaxe Básica',
+        perguntas: [
+          { pergunta: 'Como declarar uma função?', opcoes: ['func', 'function', 'void', 'define'], correta: 2 },
+          { pergunta: 'Operador lógico "E" em C# é?', opcoes: ['&&', '||', '==', '!='], correta: 0 },
+          { pergunta: 'Qual estrutura para repetição?', opcoes: ['loop', 'for', 'repeat', 'cycle'], correta: 1 },
+          { pergunta: 'Qual símbolo fecha instruções?', opcoes: [';', ':', '.', ','], correta: 0 },
+          { pergunta: 'Qual é tipo de dado para textos?', opcoes: ['char', 'text', 'string', 'var'], correta: 2 },
+        ]
+      },
+      // (Você pode adicionar mais atividades)
+    ]
+  }
+  // (Adicionar outras trilhas aqui)
+};
+
+let trilhaSelecionada = null;
+let atividadeAtual = 0;
+let perguntaAtual = 0;
+let acertos = 0;
+
+function abrirTrilha(nomeTrilha) {
+  trilhaSelecionada = trilhas[nomeTrilha];
+  atividadeAtual = 0;
+  perguntaAtual = 0;
+  acertos = 0;
+  carregarAtividade();
+}
+
+function carregarAtividade() {
+  const atividade = trilhaSelecionada.atividades[atividadeAtual];
+  const conteudo = document.getElementById('conteudoTrilha');
+
+  conteudo.innerHTML = `
+    <h2 style="color: #2EF2AA;">${trilhaSelecionada.nome}</h2>
+    <h3 style="margin-top: 1rem;">Atividade: ${atividade.titulo}</h3>
+    <div id="perguntaContainer" style="margin-top: 2rem;"></div>
+    <button id="botaoProxima" style="margin-top: 2rem; padding: 0.8rem 2rem; background-color: #2EF2AA; color: #0f2b40; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">Começar</button>
+  `;
+
+  document.getElementById('botaoProxima').onclick = mostrarPergunta;
+}
+
+function mostrarPergunta() {
+  const atividade = trilhaSelecionada.atividades[atividadeAtual];
+  const perguntaObj = atividade.perguntas[perguntaAtual];
+  const container = document.getElementById('perguntaContainer');
+
+  container.innerHTML = `
+    <div style="margin-bottom: 1rem; font-weight: bold;">${perguntaObj.pergunta}</div>
+    ${perguntaObj.opcoes.map((opcao, index) => `
+      <button onclick="responder(${index})" style="display: block; margin: 0.5rem auto; padding: 0.8rem; width: 80%; background-color: #0f2b40; color: #2EF2AA; border: 1px solid #2EF2AA; border-radius: 8px; cursor: pointer;">${opcao}</button>
+    `).join('')}
+  `;
+
+  const botao = document.getElementById('botaoProxima');
+  botao.style.display = 'none'; // Esconde o botão até responder
+}
+
+function responder(indice) {
+  const atividade = trilhaSelecionada.atividades[atividadeAtual];
+  const perguntaObj = atividade.perguntas[perguntaAtual];
+
+  if (indice === perguntaObj.correta) {
+    acertos++;
+  }
+
+  perguntaAtual++;
+
+  if (perguntaAtual < atividade.perguntas.length) {
+    mostrarPergunta();
+  } else {
+    finalizarAtividade();
+  }
+}
+
+function finalizarAtividade() {
+  const atividade = trilhaSelecionada.atividades[atividadeAtual];
+  const conteudo = document.getElementById('conteudoTrilha');
+
+  if (acertos === atividade.perguntas.length) {
+    conteudo.innerHTML = `
+      <h2 style="color: #00ffa6;">✅ Você completou a atividade "${atividade.titulo}"!</h2>
+      <button onclick="proximaAtividade()" style="margin-top: 2rem; padding: 0.8rem 2rem; background-color: #2EF2AA; color: #0f2b40; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">Próxima Atividade</button>
+    `;
+  } else {
+    conteudo.innerHTML = `
+      <h2 style="color: #f87171;">❌ Você errou algumas perguntas.</h2>
+      <button onclick="refazerAtividade()" style="margin-top: 2rem; padding: 0.8rem 2rem; background-color: #f97316; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">Tentar Novamente</button>
+    `;
+  }
+}
+
+function proximaAtividade() {
+  atividadeAtual++;
+  perguntaAtual = 0;
+  acertos = 0;
+
+  if (atividadeAtual < trilhaSelecionada.atividades.length) {
+    carregarAtividade();
+  } else {
+    document.getElementById('conteudoTrilha').innerHTML = `
+      <h2 style="color: #00ffa6;">🎉 Parabéns! Você completou toda a trilha ${trilhaSelecionada.nome}!</h2>
+    `;
+  }
+}
+
+function refazerAtividade() {
+  perguntaAtual = 0;
+  acertos = 0;
+  carregarAtividade();
+}
+
+*/
