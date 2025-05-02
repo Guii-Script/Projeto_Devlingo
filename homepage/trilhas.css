@@ -141,3 +141,35 @@ nav a:hover {
   font-weight: bold;
 }
 
+.dragzone, .dropzone {
+  min-height: 100px;
+  background-color: #1a2a40;
+  border: 2px dashed #2EF2AA;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.drag-item {
+  background: #2EF2AA;
+  color: #0f2b40;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: grab;
+  transition: transform 0.2s;
+}
+
+.drag-item:hover {
+  transform: scale(1.05);
+}
+
+.drag-item.static {
+  cursor: default;
+  background-color: #22c55e;
+  color: white;
+}
