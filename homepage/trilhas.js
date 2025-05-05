@@ -8,8 +8,9 @@ const trilhas = {
         perguntas: [
           {
             tipo: 'arrastar-palavras',
-            frase: 'A programação orientada a objeto usa classes e objetos.',
-            lacunas: ['orientada', 'classes', 'objetos']
+            frase: 'O método Main é o ponto de entrada de um programa em C#.',
+            lacunas: ['erro', 'parada', 'final', 'entrada'],
+            opcoes: ['erro', 'parada', 'final', 'entrada']
           },
           {
             tipo: 'multipla-escolha',
@@ -41,8 +42,9 @@ const trilhas = {
         perguntas: [
           {
             tipo: 'arrastar-palavras',
-            frase: 'Em C#, a principal função é a __________.',
-            lacunas: ['Main']
+            frase: 'int idade = 25;',
+            lacunas: ['var', 'int', 'string', 'float', 'boolean'],
+            opcoes: ['var', 'int', 'string', 'float', 'boolean']
           },
           {
             tipo: 'multipla-escolha',
