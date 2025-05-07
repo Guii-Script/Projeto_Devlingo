@@ -6,47 +6,86 @@
   <title>Devlingo - Trilhas</title>
   <link rel="stylesheet" href="trilhas.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
   <header>
-    <input type="text" class="barra-pesquisa" placeholder="O Que gostaria de aprender?">
-    <nav>
-      <a href="#">CURSOS</a>
-      <a href="#">PERFIL</a>
-      <a href="#">QUIZ</a>
-      <img src="https://i.imgur.com/W8yZNOX.png" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; margin-left: 1rem;">
-    </nav>
+    <div class="header-content">
+      <input type="text" class="barra-pesquisa" placeholder="O que gostaria de aprender?">
+      <nav>
+        <a href="#"><i class="fas fa-book"></i> CURSOS</a>
+        <a href="#"><i class="fas fa-user"></i> PERFIL</a>
+        <a href="#"><i class="fas fa-question-circle"></i> QUIZ</a>
+        <img src="https://i.imgur.com/W8yZNOX.png" alt="Avatar" class="avatar">
+      </nav>
+    </div>
   </header>
 
-  <div style="display: flex; height: calc(100vh - 80px); background-color: #01080D; color: white;">
+  <div class="main-container">
     <!-- Coluna da Esquerda -->
-    <aside style="width: 250px; padding: 2rem 1rem; display: flex; flex-direction: column; gap: 1rem; text-align: center; background-color: #01080D;">
-      <h2 style="color: #00ffa6; font-size: 1.5rem; margin-bottom: 1rem;">Dev_lingo</h2>
-      <button class="botao-trilha" onclick="abrirTrilha('C#')">Trilha C#</button>
-      <button class="botao-trilha" onclick="abrirTrilha('HTML')">Trilha HTML</button>
-      <button class="botao-trilha" onclick="abrirTrilha('PHP')">Trilha PHP</button>
-      <button class="botao-trilha" onclick="abrirTrilha('JavaScript')">Trilha JavaScript</button>
-      <button class="botao-trilha" onclick="abrirTrilha('Database')">Trilha Database</button>
+    <aside class="sidebar">
+      <div class="sidebar-content">
+        <h2 class="logo"><i class="fas fa-code"></i> Dev_lingo</h2>
+        <div class="trilhas-menu">
+          <button class="botao-trilha" onclick="abrirTrilha('C#')">
+            <i class="fab fa-microsoft"></i> Trilha C#
+          </button>
+          <button class="botao-trilha" onclick="abrirTrilha('HTML')">
+            <i class="fab fa-html5"></i> Trilha HTML
+          </button>
+          <button class="botao-trilha" onclick="abrirTrilha('PHP')">
+            <i class="fab fa-php"></i> Trilha PHP
+          </button>
+          <button class="botao-trilha" onclick="abrirTrilha('JavaScript')">
+            <i class="fab fa-js"></i> Trilha JavaScript
+          </button>
+          <button class="botao-trilha" onclick="abrirTrilha('Database')">
+            <i class="fas fa-database"></i> Trilha Database
+          </button>
+        </div>
+      </div>
     </aside>
 
-    <!-- Conteúdo -->
-    <main style="flex-grow: 1; padding: 2rem; display: flex; justify-content: space-between;">
-      <section id="conteudoTrilha" style="flex-grow: 1; text-align: center;"></section>
+    <!-- Conteúdo Principal -->
+    <main class="content">
+      <section id="conteudoTrilha" class="trilha-content"></section>
 
-      <!-- Missões -->
-      <section style="width: 300px; display: flex; flex-direction: column; gap: 2rem;">
-        <div class="missao">
-          <div>Missões diárias</div>
-          <p>Conclua uma lição</p>
-          <div class="barra-progresso">
-            <div id="barraDiaria" style="width: 0%;" class="barra-preenchida">0 / 1</div>
+      <!-- Status e Missões -->
+      <section class="missions">
+        <div class="status-container">
+          <div class="status-jogador">
+            <div class="status-item">
+              <span class="icone"><i class="fas fa-heart"></i></span>
+              <span id="vidas">3</span>
+            </div>
+            <div class="status-item">
+              <span class="icone"><i class="fas fa-fire"></i></span>
+              <span id="streak">0</span>
+            </div>
+            <div class="status-item">
+              <span class="icone"><i class="fas fa-gem"></i></span>
+              <span id="moedas">0</span>
+            </div>
+            <div class="status-item">
+              <span class="icone"><i class="fas fa-clock"></i></span>
+              <span id="timerVidas" style="display: none;">5:00</span>
+            </div>
           </div>
-        </div>
-        <div class="missao">
-          <div>Missões semanais</div>
-          <p>Complete uma trilha</p>
-          <div class="barra-progresso">
-            <div id="barraSemanal" style="width: 0%;" class="barra-preenchida">0 / 5</div>
+          
+          <div class="missao-card">
+            <h3><i class="fas fa-calendar-day"></i> Missão Diária</h3>
+            <p>Conclua uma lição</p>
+            <div class="barra-progresso">
+              <div id="barraDiaria" class="barra-preenchida">1 / 1</div>
+            </div>
+          </div>
+          
+          <div class="missao-card">
+            <h3><i class="fas fa-calendar-week"></i> Missão Semanal</h3>
+            <p>Complete uma trilha</p>
+            <div class="barra-progresso">
+              <div id="barraSemanal" class="barra-preenchida">0 / 5</div>
+            </div>
           </div>
         </div>
       </section>

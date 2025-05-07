@@ -1,4 +1,3 @@
-// Objeto com todas as trilhas disponíveis
 const trilhas = {
   'C#': {
     nome: 'Trilha C#',
@@ -20,9 +19,9 @@ const trilhas = {
           },
           {
             tipo: 'arrastar-palavras',
-            frase: 'O C# foi criado pela Microsoft.',
-            lacunas: ['Microsoft', 'fortemente', 'Oracle', 'fracamente', 'Apple', 'tipada'],
-            opcoes: ['Microsoft', 'fortemente', 'Oracle', 'fracamente', 'Apple', 'tipada']
+            frase: 'O C# foi criado pela Microsoft',
+            lacunas: ['Microsoft', 'Google', 'Oracle', 'Amazon', 'Apple', 'tipada'],
+            opcoes: ['Microsoft', 'Google', 'Oracle', 'Amazon', 'Apple', 'tipada']
           },
           {
             tipo: 'multipla-escolha',
@@ -32,8 +31,9 @@ const trilhas = {
           },
           {
             tipo: 'arrastar-palavras',
-            frase: 'As variáveis em C# são __________ tipadas.',
-            lacunas: ['fortemente']
+            frase: 'Uma variável serve para guardar temporariamente valores na memória.',
+            lacunas: ['variável', 'classe', 'objeto', 'propriedade'],
+            opcoes: ['variável', 'classe', 'objeto', 'propriedade']
           }
         ]
       },
@@ -54,8 +54,9 @@ const trilhas = {
           },
           {
             tipo: 'arrastar-palavras',
-            frase: 'O método __________ imprime na tela.',
-            lacunas: ['Console.WriteLine']
+            frase: 'O método Console.WriteLine imprime na tela.',
+            lacunas: ['Console.WriteLine', 'Console.ReadLine', 'Main', 'Write', 'System'],
+            opcoes: ['Console.WriteLine', 'Console.ReadLine', 'Main', 'Write', 'System']
           },
           {
             tipo: 'multipla-escolha',
@@ -65,8 +66,9 @@ const trilhas = {
           },
           {
             tipo: 'arrastar-palavras',
-            frase: 'Os arrays em C# têm tamanho __________.',
-            lacunas: ['fixo']
+            frase: 'Os arrays em C# têm tamanho fixo',
+            lacunas: ['fixo', 'dinâmico', 'imutável', 'ilimitado', 'nulo'],
+            opcoes: ['fixo', 'dinâmico', 'imutável', 'ilimitado', 'nulo']
           }
         ]
       }
@@ -102,43 +104,180 @@ const estadoApp = {
   perguntaAtual: 0,
   perguntasRespondidas: 0,
   perguntasTotais: 0,
-  etapasTotais: 0
+  etapasTotais: 0,
+  vidas: 3,
+  streak: 0,
+  moedas: 0,
+  respostasCorretas: 0,
+  bloqueado: false,
+  tempoRecargaVidas: null,
+  respondendo: false,
+  // Novos estados para missões
+  liçõesConcluidasHoje: 0,
+  trilhasConcluidasSemana: 0,
+  ultimoDiaJogado: null
 };
 
 // Elementos DOM
 const elementosDOM = {
   conteudoTrilha: document.getElementById('conteudoTrilha'),
   barraDiaria: document.getElementById('barraDiaria'),
-  barraSemanal: document.getElementById('barraSemanal')
+  barraSemanal: document.getElementById('barraSemanal'),
+  vidasElement: document.getElementById('vidas'),
+  streakElement: document.getElementById('streak'),
+  moedasElement: document.getElementById('moedas'),
+  timerVidasElement: document.getElementById('timerVidas'),
+  feedbackContainer: document.createElement('div'),
+  overlayDano: document.createElement('div'),
+  body: document.body
 };
 
-// Função para iniciar uma trilha
+// Inicialização do jogo
+function inicializar() {
+  verificarResetDiario();
+  configurarElementosDOM();
+  atualizarStatus();
+  atualizarBarrasProgresso();
+}
+
+function verificarResetDiario() {
+  const hoje = new Date().toDateString();
+  
+  // Se for um novo dia, resetar contadores diários
+  if (estadoApp.ultimoDiaJogado !== hoje) {
+    estadoApp.liçõesConcluidasHoje = 0;
+    estadoApp.ultimoDiaJogado = hoje;
+  }
+  
+  // Aqui você pode adicionar lógica para verificar se é uma nova semana
+  // e resetar o contador semanal se necessário
+}
+
+function configurarElementosDOM() {
+  elementosDOM.feedbackContainer.className = 'feedback-container';
+  document.body.appendChild(elementosDOM.feedbackContainer);
+
+  elementosDOM.overlayDano.className = 'overlay-dano';
+  document.body.appendChild(elementosDOM.overlayDano);
+}
+
+// Atualiza a exibição dos status
+function atualizarStatus() {
+  elementosDOM.vidasElement.textContent = estadoApp.vidas;
+  elementosDOM.streakElement.textContent = estadoApp.streak;
+  elementosDOM.moedasElement.textContent = estadoApp.moedas;
+  
+  if (estadoApp.bloqueado && estadoApp.tempoRecargaVidas) {
+    elementosDOM.timerVidasElement.style.display = 'inline';
+    iniciarContadorVidas();
+  } else {
+    elementosDOM.timerVidasElement.style.display = 'none';
+  }
+}
+
+function atualizarBarrasProgresso() {
+  // Barra diária (1 lição = 100%)
+  const progressoDiario = Math.min(estadoApp.liçõesConcluidasHoje, 1);
+  elementosDOM.barraDiaria.style.width = `${progressoDiario * 100}%`;
+  elementosDOM.barraDiaria.textContent = `${estadoApp.liçõesConcluidasHoje}/1`;
+  
+  // Barra semanal (1 trilha = 100%)
+  const progressoSemanal = Math.min(estadoApp.trilhasConcluidasSemana, 1);
+  elementosDOM.barraSemanal.style.width = `${progressoSemanal * 100}%`;
+  elementosDOM.barraSemanal.textContent = `${estadoApp.trilhasConcluidasSemana}/1`;
+}
+
+// Efeito visual ao perder vida
+function efeitoPerdaVida() {
+  elementosDOM.overlayDano.classList.add('ativo');
+  
+  setTimeout(() => {
+    elementosDOM.overlayDano.classList.remove('ativo');
+  }, 500);
+}
+
+// Controle de resposta para evitar múltiplos cliques
+function podeResponder() {
+  if (estadoApp.respondendo || estadoApp.bloqueado) return false;
+  estadoApp.respondendo = true;
+  return true;
+}
+
+function liberarResposta() {
+  estadoApp.respondendo = false;
+}
+
+// Gerenciamento de vidas
+function perderVida() {
+  if (estadoApp.vidas <= 0) return;
+  
+  estadoApp.vidas--;
+  estadoApp.streak = 0;
+  efeitoPerdaVida();
+  atualizarStatus();
+  
+  if (estadoApp.vidas <= 0) {
+    estadoApp.bloqueado = true;
+    estadoApp.tempoRecargaVidas = new Date(Date.now() + 5 * 60 * 1000);
+    mostrarFeedback('Você perdeu todas as vidas! Espere 5 minutos.', false);
+  }
+}
+
+// Inicia o contador para recarregar vidas
+function iniciarContadorVidas() {
+  const agora = new Date();
+  const diferenca = estadoApp.tempoRecargaVidas - agora;
+  
+  if (diferenca <= 0) {
+    recarregarVidas();
+    return;
+  }
+  
+  const minutos = Math.floor((diferenca % (1000 * 60 * 60)) / (1000 * 60));
+  const segundos = Math.floor((diferenca % (1000 * 60)) / 1000);
+  
+  elementosDOM.timerVidasElement.textContent = `${minutos}:${segundos < 10 ? '0' : ''}${segundos}`;
+  
+  setTimeout(iniciarContadorVidas, 1000);
+}
+
+function recarregarVidas() {
+  estadoApp.vidas = 3;
+  estadoApp.bloqueado = false;
+  estadoApp.tempoRecargaVidas = null;
+  atualizarStatus();
+  mostrarFeedback('Suas vidas foram recarregadas!', true);
+}
+
+// Funções principais do jogo
 function abrirTrilha(trilha) {
+  if (estadoApp.bloqueado) {
+    mostrarFeedback('Você está sem vidas! Espere elas recarregarem.', false);
+    return;
+  }
+
   if (!trilhas[trilha]) {
     console.error('Trilha não encontrada:', trilha);
     return;
   }
 
-  // Atualiza o estado
   estadoApp.trilhaAtual = trilha;
   estadoApp.etapaAtual = 0;
   estadoApp.perguntaAtual = 0;
   estadoApp.perguntasRespondidas = 0;
+  estadoApp.respostasCorretas = 0;
 
   const trilhaSelecionada = trilhas[trilha];
   estadoApp.perguntasTotais = calcularTotalPerguntas(trilhaSelecionada);
   estadoApp.etapasTotais = trilhaSelecionada.etapas.length;
 
-  // Renderiza a tela inicial da trilha
   renderizarTelaInicialTrilha(trilhaSelecionada);
 }
 
-// Calcula o total de perguntas em uma trilha
 function calcularTotalPerguntas(trilha) {
   return trilha.etapas.reduce((total, etapa) => total + etapa.perguntas.length, 0);
 }
 
-// Renderiza a tela inicial da trilha
 function renderizarTelaInicialTrilha(trilha) {
   elementosDOM.conteudoTrilha.innerHTML = `
     <div class="trilha-inicio">
@@ -158,12 +297,9 @@ function renderizarTelaInicialTrilha(trilha) {
     </div>
   `;
 
-  document.getElementById('comecarTrilha').addEventListener('click', () => {
-    iniciarEtapaAtual();
-  });
+  document.getElementById('comecarTrilha').addEventListener('click', iniciarEtapaAtual);
 }
 
-// Inicia a etapa atual
 function iniciarEtapaAtual() {
   const trilha = trilhas[estadoApp.trilhaAtual];
   const etapa = trilha.etapas[estadoApp.etapaAtual];
@@ -182,7 +318,6 @@ function iniciarEtapaAtual() {
   exibirPerguntaAtual();
 }
 
-// Exibe a pergunta atual
 function exibirPerguntaAtual() {
   const trilha = trilhas[estadoApp.trilhaAtual];
   const etapa = trilha.etapas[estadoApp.etapaAtual];
@@ -195,7 +330,6 @@ function exibirPerguntaAtual() {
   }
 }
 
-// Cria uma pergunta do tipo "arrastar palavras" - VERSÃO CORRIGIDA
 function criarPerguntaArrastar(pergunta) {
   const { frase, lacunas } = pergunta;
   const palavras = frase.split(' ');
@@ -203,7 +337,6 @@ function criarPerguntaArrastar(pergunta) {
   
   container.innerHTML = '';
   
-  // Atualiza o contador de perguntas
   const contador = document.querySelector('.progresso-etapa');
   if (contador) {
     const trilha = trilhas[estadoApp.trilhaAtual];
@@ -211,13 +344,11 @@ function criarPerguntaArrastar(pergunta) {
     contador.textContent = `Pergunta ${estadoApp.perguntaAtual + 1} de ${etapa.perguntas.length}`;
   }
 
-  // Cria a frase com lacunas
   const fraseElement = document.createElement('div');
   fraseElement.className = 'frase-com-lacunas';
   
   palavras.forEach((palavra) => {
-    // Verifica se a palavra (sem pontuação) está nas lacunas
-    const palavraLimpa = palavra.replace(/[.,;?!]/g, '');
+    const palavraLimpa = palavra.replace(/[,;?!]/g, '');
     
     if (lacunas.includes(palavraLimpa)) {
       const lacuna = document.createElement('span');
@@ -228,8 +359,7 @@ function criarPerguntaArrastar(pergunta) {
       lacuna.addEventListener('drop', soltarPalavra);
       fraseElement.appendChild(lacuna);
       
-      // Adiciona espaço após a lacuna, exceto se for pontuação
-      if (!/[.,;?!]/.test(palavra)) {
+      if (!/[,;?!]/.test(palavra)) {
         fraseElement.appendChild(document.createTextNode(' '));
       }
     } else {
@@ -237,11 +367,9 @@ function criarPerguntaArrastar(pergunta) {
     }
   });
   
-  // Cria a área de palavras arrastáveis
   const areaArrastavel = document.createElement('div');
   areaArrastavel.className = 'dragzone';
   
-  // Embaralha as palavras para arrastar
   const lacunasEmbaralhadas = [...lacunas].sort(() => Math.random() - 0.5);
   
   lacunasEmbaralhadas.forEach(palavra => {
@@ -257,7 +385,6 @@ function criarPerguntaArrastar(pergunta) {
   container.appendChild(areaArrastavel);
 }
 
-// Funções para arrastar e soltar palavras
 function permitirSoltar(e) {
   e.preventDefault();
 }
@@ -271,19 +398,18 @@ function soltarPalavra(e) {
   const palavra = e.dataTransfer.getData('text/plain');
   const lacuna = e.target;
   
-  // Só permite soltar se for uma lacuna vazia
   if (lacuna.classList.contains('lacuna') && lacuna.textContent === '__________') {
     lacuna.textContent = palavra;
     lacuna.dataset.preenchido = palavra;
     lacuna.classList.add('preenchida');
     
-    // Verifica se todas as lacunas foram preenchidas
     verificarRespostasArrastar();
   }
 }
 
-// Verifica as respostas do tipo arrastar - VERSÃO CORRIGIDA
 function verificarRespostasArrastar() {
+  if (!podeResponder()) return;
+
   const lacunas = elementosDOM.etapasContainer.querySelectorAll('.lacuna');
   const todasPreenchidas = Array.from(lacunas).every(lacuna => 
     lacuna.textContent !== '__________'
@@ -296,21 +422,23 @@ function verificarRespostasArrastar() {
     
     if (todasCorretas) {
       mostrarFeedback('Resposta correta!', true);
+      avancarPergunta(true);
     } else {
-      mostrarFeedback('Algumas palavras estão incorretas. Tente novamente!', false);
-      // Resetar lacunas após um tempo
+      perderVida();
+      mostrarFeedback('Algumas palavras estão incorretas!', false);
+      
       setTimeout(() => {
         lacunas.forEach(lacuna => {
           lacuna.textContent = '__________';
           lacuna.classList.remove('preenchida');
           delete lacuna.dataset.preenchido;
         });
+        liberarResposta();
       }, 1500);
     }
   }
 }
 
-// Cria uma pergunta de múltipla escolha
 function criarPerguntaMultiplaEscolha(pergunta) {
   const { pergunta: texto, opcoes, resposta } = pergunta;
   const container = elementosDOM.etapasContainer;
@@ -322,7 +450,6 @@ function criarPerguntaMultiplaEscolha(pergunta) {
     </div>
   `;
   
-  // Atualiza o contador de perguntas
   const contador = document.querySelector('.progresso-etapa');
   if (contador) {
     const trilha = trilhas[estadoApp.trilhaAtual];
@@ -343,60 +470,70 @@ function criarPerguntaMultiplaEscolha(pergunta) {
   });
 }
 
-// Verifica a resposta de múltipla escolha
 function verificarRespostaMultiplaEscolha(correta, respostaCorreta) {
+  if (!podeResponder()) return;
+
   if (correta) {
     mostrarFeedback('Resposta correta!', true);
+    avancarPergunta(true);
   } else {
-    mostrarFeedback(`Resposta incorreta. A resposta correta é: ${respostaCorreta}`, false);
+    perderVida();
+    mostrarFeedback(`Resposta incorreta! A resposta correta é: ${respostaCorreta}`, false);
+    liberarResposta();
   }
 }
 
-// Mostra feedback e avança ou não
 function mostrarFeedback(mensagem, acertou) {
-  alert(mensagem); // Poderia ser substituído por um modal mais bonito
+  elementosDOM.feedbackContainer.innerHTML = `
+    <div class="feedback ${acertou ? 'correto' : 'incorreto'}">
+      <i class="fas ${acertou ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+      <p>${mensagem}</p>
+    </div>
+  `;
   
+  elementosDOM.feedbackContainer.style.display = 'block';
+  
+  setTimeout(() => {
+    elementosDOM.feedbackContainer.style.display = 'none';
+  }, 1500);
+}
+
+function avancarPergunta(acertou) {
   if (acertou) {
+    estadoApp.respostasCorretas++;
+    estadoApp.streak++;
+    estadoApp.moedas += 10;
     estadoApp.perguntasRespondidas++;
-    atualizarProgresso();
-    
-    const trilha = trilhas[estadoApp.trilhaAtual];
-    const etapa = trilha.etapas[estadoApp.etapaAtual];
-    
-    // Avança para a próxima pergunta ou etapa
-    estadoApp.perguntaAtual++;
-    
-    if (estadoApp.perguntaAtual >= etapa.perguntas.length) {
-      estadoApp.etapaAtual++;
-      estadoApp.perguntaAtual = 0;
-      
-      if (estadoApp.etapaAtual >= trilha.etapas.length) {
-        // Trilha concluída
-        mostrarConclusaoTrilha();
-      } else {
-        // Próxima etapa
-        iniciarEtapaAtual();
-      }
-    } else {
-      // Próxima pergunta na mesma etapa
-      exibirPerguntaAtual();
-    }
+    atualizarStatus();
   }
-}
-
-// Atualiza as barras de progresso
-function atualizarProgresso() {
-  // Atualiza missão diária (1/1)
-  elementosDOM.barraDiaria.style.width = '100%';
-  elementosDOM.barraDiaria.textContent = '1 / 1';
   
-  // Atualiza missão semanal (baseado no progresso da trilha)
-  const progresso = Math.round((estadoApp.perguntasRespondidas / estadoApp.perguntasTotais) * 100);
-  elementosDOM.barraSemanal.style.width = `${progresso}%`;
-  elementosDOM.barraSemanal.textContent = `${estadoApp.perguntasRespondidas} / ${estadoApp.perguntasTotais}`;
+  const trilha = trilhas[estadoApp.trilhaAtual];
+  const etapa = trilha.etapas[estadoApp.etapaAtual];
+  
+  estadoApp.perguntaAtual++;
+  
+  if (estadoApp.perguntaAtual >= etapa.perguntas.length) {
+    // Lição concluída!
+    estadoApp.liçõesConcluidasHoje = 1; // Máximo 1 por dia
+    estadoApp.etapaAtual++;
+    estadoApp.perguntaAtual = 0;
+    
+    if (estadoApp.etapaAtual >= trilha.etapas.length) {
+      // Trilha concluída!
+      estadoApp.trilhasConcluidasSemana = 1; // Máximo 1 por semana
+      mostrarConclusaoTrilha();
+    } else {
+      iniciarEtapaAtual();
+    }
+    
+    atualizarBarrasProgresso();
+  } else {
+    exibirPerguntaAtual();
+  }
+  
+  liberarResposta();
 }
 
-// Mostra tela de conclusão da trilha
 function mostrarConclusaoTrilha() {
   elementosDOM.conteudoTrilha.innerHTML = `
     <div class="trilha-concluida">
@@ -412,172 +549,20 @@ function mostrarConclusaoTrilha() {
           <span class="rotulo">Perguntas</span>
         </div>
         <div class="estatistica">
-          <span class="numero">${estadoApp.perguntasRespondidas}</span>
+          <span class="numero">${estadoApp.respostasCorretas}</span>
           <span class="rotulo">Acertos</span>
         </div>
+        <div class="estatistica">
+          <span class="numero">${estadoApp.moedas}</span>
+          <span class="rotulo">Moedas</span>
+        </div>
       </div>
-      <button class="botao-primario" onclick="abrirTrilha('${estadoApp.trilhaAtual}')">Refazer Trilha</button>
+      <button class="botao-primario" onclick="abrirTrilha('${estadoApp.trilhaAtual}')">
+        <i class="fas fa-redo"></i> Refazer Trilha
+      </button>
     </div>
   `;
 }
 
-// Adiciona os estilos dinamicamente
-function adicionarEstilosDinamicos() {
-  const style = document.createElement('style');
-  style.textContent = `
-    .trilha-inicio, .trilha-concluida {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 2rem;
-      text-align: center;
-    }
-    
-    .titulo-trilha, .titulo-conclusao {
-      color: #2EF2AA;
-      margin-bottom: 1rem;
-      font-size: 2rem;
-    }
-    
-    .descricao-trilha, .mensagem-conclusao {
-      margin-bottom: 2rem;
-      color: #ccc;
-    }
-    
-    .estatisticas-trilha, .estatisticas-conclusao {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      margin: 2rem 0;
-    }
-    
-    .estatistica {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .numero {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #2EF2AA;
-    }
-    
-    .rotulo {
-      font-size: 0.9rem;
-      color: #aaa;
-    }
-    
-    .botao-primario {
-      background-color: #2EF2AA;
-      color: #0f2b40;
-      border: none;
-      padding: 0.8rem 2rem;
-      border-radius: 50px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 1rem;
-    }
-    
-    .botao-primario:hover {
-      background-color: #25d895;
-      transform: translateY(-2px);
-    }
-    
-    .cabecalho-etapa {
-      margin-bottom: 2rem;
-      text-align: center;
-    }
-    
-    .titulo-etapa {
-      color: #2EF2AA;
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .progresso-etapa {
-      color: #aaa;
-      font-size: 0.9rem;
-    }
-    
-    .frase-com-lacunas {
-      font-size: 1.2rem;
-      line-height: 2;
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
-    
-    .lacuna {
-      display: inline-block;
-      min-width: 100px;
-      background-color: #264a64;
-      border-radius: 5px;
-      padding: 0 10px;
-      margin: 0 5px;
-      color: transparent;
-      text-shadow: 0 0 5px rgba(255,255,255,0.5);
-      position: relative;
-    }
-    
-    .lacuna.preenchida {
-      color: white;
-      text-shadow: none;
-      background-color: #1a2a40;
-    }
-    
-    .pergunta-multipla-escolha {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    
-    .texto-pergunta {
-      font-size: 1.2rem;
-      margin-bottom: 1.5rem;
-      text-align: center;
-    }
-    
-    .opcoes-resposta {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    
-    .opcao {
-      background-color: #264a64;
-      color: white;
-      border: none;
-      padding: 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 1rem;
-    }
-    
-    .opcao:hover {
-      background-color: #2EF2AA;
-      color: #0f2b40;
-    }
-    
-    .dragzone {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      justify-content: center;
-      margin-top: 1rem;
-    }
-    
-    .drag-item {
-      background-color: #2EF2AA;
-      color: #0f2b40;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: move;
-      user-select: none;
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-// Inicializa o aplicativo
-adicionarEstilosDinamicos();
+// Inicializa o aplicativo quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', inicializar);
