@@ -1,38 +1,200 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dev_Lingo</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Devlingo - Login</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
-
 <body>
-    <main class="content">
-        <div class="col1">
-            <img class="pato" src="imagens/pato1.png" alt="pato" height="80">
-            <h2 class="titulo">Dev_Lingo</h2>
-            <p class="texto">Preencha os campos abaixo <br> para acessar sua conta</p>
-            <h2 class="subtitulo">Faça seu login</h2>
-            <form class="login">
-                <label class="rotulo">Email</label>
-                <input type="text" class="campo-texto">
-                <label class="rotulo">Senha</label>
-                <input type="text" class="campo-texto">
-            </form>
-            <a href="loading.html" class="botoes">
-                <button class="botao-entrar">ENTRAR</button>
-                <button class="botao-google">Continuar com Google</button>
-            </a>
-            <a href="cadastro.html" class="cadastro">Primeiro Acesso</a>
-            <a href="#" class="cadastro2">Esqueceu sua Senha?</a>
-        </div>
-        <div class="col2">
-            <img class="bg2" src="imagens/bg1.png" alt="background">
-        </div>
-    </main>
-    <script src="app.js"></script>
-</body>
+  <div class="particles" id="particles"></div>
+  
+  <div class="login-container" id="loginContainer">
+    <div class="login-logo">
+      <i class="fas fa-code"></i>
+      <h1>Dev_lingo</h1>
+    </div>
+    
+    <p class="login-subtitle">Preencha os campos abaixo para acessar sua conta</p>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" class="login-input" placeholder="Digite seu e-mail" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" class="login-input" placeholder="Digite sua senha" required>
+      </div>
+      
+      <button type="submit" class="botao-login" id="botaoEntrar">
+        <span id="botaoTexto">ENTRAR</span>
+      </button>
+      
+      <div class="login-divider">
+        <span>ou</span>
+      </div>
+      
+      <button type="button" class="botao-google">
+        <i class="fab fa-google"></i> Continuar com Google
+      </button>
+    </form>
+    
+    <div class="login-links">
+      <a href="cadastro.html" class="login-link">Primeiro acesso? Cadastre-se</a>
+      <a href="#" class="login-link">Esqueceu sua senha?</a>
+    </div>
+  </div>
 
+  <script>
+    // Criar partículas de fundo
+    function criarParticulas() {
+      const container = document.getElementById('particles');
+      const particleCount = 20;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Tamanho aleatório entre 2px e 6px
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Posição aleatória
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        
+        // Atraso aleatório na animação
+        particle.style.animationDelay = `${Math.random() * 10}s`;
+        
+        // Duração aleatória da animação
+        particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+        
+        container.appendChild(particle);
+      }
+    }
+    
+    // Efeito de confete
+    function lancarConfetti() {
+      const colors = ['#2EF2AA', '#25d895', '#1dc084', '#15a873'];
+      const container = document.getElementById('loginContainer');
+      
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        
+        // Estilo do confete
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.width = `${Math.random() * 8 + 4}px`;
+        confetti.style.height = `${Math.random() * 8 + 4}px`;
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.top = '-10px';
+        
+        // Animação
+        const animationDuration = Math.random() * 3 + 2;
+        confetti.style.animation = `confetti-fall ${animationDuration}s linear forwards`;
+        
+        // Rotação aleatória
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        
+        // Adicionar ao container
+        container.appendChild(confetti);
+        
+        // Definir keyframes dinamicamente
+        const keyframes = `
+          @keyframes confetti-fall {
+            0% {
+              transform: translateY(0) rotate(0deg);
+              opacity: 1;
+            }
+            100% {
+              transform: translateY(500px) rotate(${Math.random() * 360}deg);
+              opacity: 0;
+            }
+          }
+        `;
+        
+        const style = document.createElement('style');
+        style.innerHTML = keyframes;
+        document.head.appendChild(style);
+        
+        // Remover após a animação
+        setTimeout(() => {
+          confetti.remove();
+          style.remove();
+        }, animationDuration * 1000);
+      }
+    }
+    
+    // Validar formulário
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email');
+      const senha = document.getElementById('senha');
+      const botaoEntrar = document.getElementById('botaoEntrar');
+      const botaoTexto = document.getElementById('botaoTexto');
+      
+      // Simular validação
+      if (email.value === '' || senha.value === '') {
+        // Efeito de erro
+        if (email.value === '') {
+          email.classList.add('error-animation');
+          setTimeout(() => email.classList.remove('error-animation'), 1500);
+        }
+        if (senha.value === '') {
+          senha.classList.add('error-animation');
+          setTimeout(() => senha.classList.remove('error-animation'), 1500);
+        }
+        
+        // Efeito de tremer o container
+        document.getElementById('loginContainer').style.animation = 'shake 0.5s';
+        setTimeout(() => {
+          document.getElementById('loginContainer').style.animation = '';
+        }, 500);
+      } else {
+        // Efeito de sucesso
+        email.classList.add('success-animation');
+        senha.classList.add('success-animation');
+        
+        // Mudar texto do botão
+        botaoTexto.textContent = 'CARREGANDO...';
+        botaoEntrar.disabled = true;
+        
+        // Simular carga
+        setTimeout(() => {
+          lancarConfetti();
+          
+          // Efeito de pulso no container
+          document.getElementById('loginContainer').style.animation = 'pulse 0.5s';
+          
+          // Redirecionar após 1s
+          setTimeout(() => {
+            window.location.href = 'loading.html';
+          }, 1000);
+        }, 1500);
+      }
+    });
+    
+    // Inicializar
+    window.addEventListener('load', () => {
+      criarParticulas();
+      
+      // Efeito de entrada
+      document.getElementById('loginContainer').style.opacity = '0';
+      document.getElementById('loginContainer').style.transform = 'translateY(20px)';
+      document.getElementById('loginContainer').style.transition = 'all 0.5s ease';
+      
+      setTimeout(() => {
+        document.getElementById('loginContainer').style.opacity = '1';
+        document.getElementById('loginContainer').style.transform = 'translateY(0)';
+      }, 100);
+    });
+  </script>
+</body>
 </html>
