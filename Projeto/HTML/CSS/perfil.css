@@ -1,129 +1,291 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', sans-serif;
-  }
+    :root {
+      --cor-primaria: #2EF2AA;
+      --cor-secundaria: #0f2b40;
+      --cor-fundo: #01080D;
+      --cor-texto: #ffffff;
+      --cor-destaque: #25d895;
+      --cor-card: #0a1620;
+      --cor-borda: rgba(46, 242, 170, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      color: var(--cor-texto);
+      background-color: var(--cor-fundo);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* Header Profissional */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 72px;
+      z-index: 1000;
+      background-color: rgba(10, 22, 32, 0.98);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid var(--cor-borda);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--cor-primaria);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .avatar:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px var(--cor-primaria);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: var(--cor-texto);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      position: relative;
+      padding: 0.5rem 0;
+    }
+
+    nav a:hover {
+      color: var(--cor-primaria);
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--cor-primaria);
+      transition: width 0.3s ease;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 12px;
+      height: 12px;
+      background-color: #f22e2e;
+      border-radius: 50%;
+      border: 2px solid var(--cor-secundaria);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Espaço para o header fixo */
+    .container-perfil {
+      margin-top: 72px;
+      padding: 2rem;
+    }
+
+    /* Estilos básicos para o conteúdo da página de perfil */
+    .container-perfil {
+      display: flex;
+      max-width: 1200px;
+      margin: 72px auto 0;
+      padding: 2rem;
+      gap: 2rem;
+    }
+
+    .menu-perfil {
+      width: 300px;
+      background-color: var(--cor-card);
+      padding: 2rem;
+      border-radius: 16px;
+      border: 1px solid var(--cor-borda);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .menu-perfil img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--cor-primaria);
+    }
+
+    .menu-perfil h2 {
+      color: var(--cor-primaria);
+      font-size: 1.5rem;
+    }
+
+    .menu-perfil blockquote {
+      font-style: italic;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .grupo-formulario {
+      width: 100%;
+    }
+
+    .grupo-formulario label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--cor-primaria);
+      font-weight: 600;
+    }
+
+    .etiqueta-editor {
+      background-color: var(--cor-primaria);
+      color: var(--cor-secundaria);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-left: 0.5rem;
+    }
+
+    .grupo-formulario input,
+    .grupo-formulario textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--cor-borda);
+      background-color: rgba(255, 255, 255, 0.05);
+      color: white;
+      font-size: 1rem;
+    }
+
+    .grupo-formulario textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .botao-salvar {
+      background: linear-gradient(90deg, var(--cor-primaria), var(--cor-destaque));
+      color: var(--cor-secundaria);
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .botao-salvar:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(46, 242, 170, 0.4);
+    }
+
+    .deletar-conta {
+      color: #ff6b6b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .deletar-conta:hover {
+      color: #ff3b3b;
+      text-decoration: underline;
+    }
+
+    .conteudo-perfil {
+      flex: 1;
+      background-color: var(--cor-card);
+      padding: 2rem;
+      border-radius: 16px;
+      border: 1px solid var(--cor-borda);
+    }
+
+    .conteudo-perfil h1 {
+      color: var(--cor-primaria);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      header {
+        padding: 0 1.5rem;
+      }
+      
+      .barra-pesquisa {
+        width: 200px;
+      }
+      
+      .barra-pesquisa:focus {
+        width: 250px;
+      }
+      
+      nav {
+        gap: 1.5rem;
+      }
+      
+      nav a span {
+        display: none;
+      }
+      
+      .container-perfil {
+        flex-direction: column;
+      }
+      
+      .menu-perfil {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 0 1rem;
+      }
+      
+      .barra-pesquisa {
+        display: none;
+      }
   
-  body {
-    background-color: #d4f5fa;
-    color: #0f2b40;
-  }
-  
-  header {
-    background-color: #0f2b40;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-  }
-  
-  .barra-pesquisa {
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    border: none;
-    width: 250px;
-    outline: none;
-  }
-  
-  nav a {
-    color: white;
-    margin: 0 1rem;
-    text-decoration: none;
-    font-weight: 600;
-  }
-  
-  .container-perfil {
-    display: flex;
-    padding: 2rem;
-  }
-  
-  .menu-perfil {
-    background-color: #e5f8fc;
-    padding: 2rem;
-    width: 300px;
-    border-right: 1px solid #ccc;
-    text-align: center;
-  }
-  
-  .menu-perfil img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 1rem;
-  }
-  
-  .menu-perfil h2 {
-    margin: 0.5rem 0;
-  }
-  
-  .menu-perfil blockquote {
-    font-size: 0.9rem;
-    color: #444;
-    margin-bottom: 2rem;
-  }
-  
-  .grupo-formulario {
-    text-align: left;
-    margin-bottom: 1.5rem;
-  }
-  
-  .grupo-formulario label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.3rem;
-  }
-  
-  .etiqueta-editor {
-    font-size: 0.8rem;
-    color: #888;
-    margin-left: 0.5rem;
-  }
-  
-  input[type=\"text\"],
-  textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    background-color: #f8f8f8;
-    font-size: 1rem;
-    resize: none;
-  }
-  
-  .botao-salvar {
-    background-color: #08415c;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    font-weight: bold;
-    border-radius: 12px;
-    cursor: pointer;
-    width: 100%;
-    margin-top: 1rem;
-  }
-  
-  .botao-salvar:hover {
-    background-color: #062d43;
-  }
-  
-  .deletar-conta {
-    margin-top: 2rem;
-    font-size: 0.9rem;
-    color: #555;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    cursor: pointer;
-  }
-  
-  .deletar-conta:hover {
-    color: red;
-  }
-  
-  .conteudo-perfil {
-    flex: 1;
-    padding: 2rem;
-  }
+    }
