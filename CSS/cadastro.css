@@ -1,9 +1,11 @@
-    :root {
+:root {
       --cor-primaria: #2EF2AA;
       --cor-secundaria: #0f2b40;
       --cor-fundo: #01080D;
       --cor-texto: #ffffff;
       --cor-destaque: #25d895;
+      --cor-erro: #ff3333;
+      --cor-sucesso: #2EF2AA;
     }
     
     @keyframes float {
@@ -27,6 +29,11 @@
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
+    }
+    
+    @keyframes progress-bar {
+      0% { width: 0%; }
+      100% { width: 100%; }
     }
     
     * {
@@ -59,8 +66,8 @@
       z-index: -1;
     }
     
-    .login-container {
-      width: 380px;
+    .cadastro-container {
+      width: 420px;
       background: rgba(10, 22, 32, 0.8);
       backdrop-filter: blur(10px);
       border-radius: 16px;
@@ -72,12 +79,12 @@
       overflow: hidden;
     }
     
-    .login-container:hover {
+    .cadastro-container:hover {
       transform: translateY(-5px);
       box-shadow: 0 12px 40px rgba(46, 242, 170, 0.2);
     }
     
-    .login-container::after {
+    .cadastro-container::after {
       content: '';
       position: absolute;
       top: 0;
@@ -89,21 +96,21 @@
       background-size: 200% 200%;
     }
     
-    .login-logo {
+    .cadastro-logo {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       animation: float 4s ease-in-out infinite;
     }
     
-    .login-logo i {
+    .cadastro-logo i {
       font-size: 2.5rem;
       color: var(--cor-primaria);
       margin-right: 0.5rem;
     }
     
-    .login-logo h1 {
+    .cadastro-logo h1 {
       font-size: 1.8rem;
       font-weight: 700;
       background: linear-gradient(90deg, var(--cor-primaria), var(--cor-destaque));
@@ -112,15 +119,15 @@
       color: transparent;
     }
     
-    .login-subtitle {
+    .cadastro-subtitle {
       text-align: center;
       color: rgba(255, 255, 255, 0.7);
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       font-size: 0.9rem;
     }
     
     .form-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
       position: relative;
     }
     
@@ -132,7 +139,7 @@
       color: var(--cor-primaria);
     }
     
-    .login-input {
+    .cadastro-input {
       width: 100%;
       padding: 1rem;
       border-radius: 8px;
@@ -143,18 +150,34 @@
       transition: all 0.3s ease;
     }
     
-    .login-input:focus {
+    .cadastro-input:focus {
       outline: none;
       border-color: var(--cor-primaria);
       background-color: rgba(46, 242, 170, 0.1);
       transform: scale(1.02);
     }
     
-    .login-input:hover {
+    .cadastro-input:hover {
       border-color: var(--cor-primaria);
     }
     
-    .botao-login {
+    .password-strength {
+      height: 4px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin-top: 0.5rem;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .strength-bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 2px;
+      transition: width 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .botao-cadastro {
       width: 100%;
       padding: 1rem;
       border-radius: 8px;
@@ -165,21 +188,21 @@
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s ease;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
       position: relative;
       overflow: hidden;
     }
     
-    .botao-login:hover {
+    .botao-cadastro:hover {
       transform: translateY(-3px);
       box-shadow: 0 5px 15px rgba(46, 242, 170, 0.4);
     }
     
-    .botao-login:active {
+    .botao-cadastro:active {
       transform: translateY(1px);
     }
     
-    .botao-login::after {
+    .botao-cadastro::after {
       content: '';
       position: absolute;
       top: 0;
@@ -191,11 +214,11 @@
       transition: transform 0.6s ease;
     }
     
-    .botao-login:hover::after {
+    .botao-cadastro:hover::after {
       transform: translateX(100%);
     }
     
-    .login-divider {
+    .cadastro-divider {
       display: flex;
       align-items: center;
       margin: 1.5rem 0;
@@ -203,14 +226,14 @@
       font-size: 0.8rem;
     }
     
-    .login-divider::before,
-    .login-divider::after {
+    .cadastro-divider::before,
+    .cadastro-divider::after {
       content: "";
       flex: 1;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    .login-divider span {
+    .cadastro-divider span {
       padding: 0 1rem;
     }
     
@@ -242,15 +265,15 @@
       color: #4285F4;
     }
     
-    .login-links {
-      margin-top: 2rem;
+    .cadastro-links {
+      margin-top: 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
       text-align: center;
     }
     
-    .login-link {
+    .cadastro-link {
       color: rgba(255, 255, 255, 0.7);
       font-size: 0.8rem;
       text-decoration: none;
@@ -258,11 +281,11 @@
       position: relative;
     }
     
-    .login-link:hover {
+    .cadastro-link:hover {
       color: var(--cor-primaria);
     }
     
-    .login-link::after {
+    .cadastro-link::after {
       content: '';
       position: absolute;
       bottom: -2px;
@@ -273,7 +296,7 @@
       transition: width 0.3s ease;
     }
     
-    .login-link:hover::after {
+    .cadastro-link:hover::after {
       width: 100%;
     }
     
@@ -295,12 +318,12 @@
     }
     
     @keyframes input-error {
-      0% { transform: translateX(0); border-color: #ff3333; }
+      0% { transform: translateX(0); border-color: var(--cor-erro); }
       20% { transform: translateX(-5px); }
       40% { transform: translateX(5px); }
       60% { transform: translateX(-5px); }
       80% { transform: translateX(5px); }
-      100% { transform: translateX(0); border-color: #ff3333; }
+      100% { transform: translateX(0); border-color: var(--cor-erro); }
     }
     
     .error-animation {
@@ -321,10 +344,49 @@
       opacity: 0;
     }
     
+    /* Tooltip de validação */
+    .validation-tooltip {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--cor-primaria);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .form-group:focus-within .validation-tooltip {
+      opacity: 1;
+    }
+    
+    /* Checklist de senha */
+    .password-checklist {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.3rem;
+    }
+    
+    .checklist-item i {
+      margin-right: 0.5rem;
+      font-size: 0.7rem;
+    }
+    
+    .checklist-item.valid {
+      color: var(--cor-primaria);
+    }
+    
     /* Responsividade */
     @media (max-width: 480px) {
-      .login-container {
+      .cadastro-container {
         width: 90%;
         padding: 1.5rem;
       }
     }
+
+    
