@@ -25,29 +25,17 @@
     <aside class="sidebar">
       <div class="sidebar-content">
         <h2 class="logo"><i class="fas fa-code"></i> Dev_lingo</h2>
-        <div class="trilhas-menu">
-          <button class="botao-trilha" onclick="abrirTrilha('C#')">
-            <i class="fab fa-microsoft"></i> Trilha C#
-          </button>
-          <button class="botao-trilha" onclick="abrirTrilha('HTML')">
-            <i class="fab fa-html5"></i> Trilha HTML
-          </button>
-          <button class="botao-trilha" onclick="abrirTrilha('PHP')">
-            <i class="fab fa-php"></i> Trilha PHP
-          </button>
-          <button class="botao-trilha" onclick="abrirTrilha('JavaScript')">
-            <i class="fab fa-js"></i> Trilha JavaScript
-          </button>
-          <button class="botao-trilha" onclick="abrirTrilha('Database')">
-            <i class="fas fa-database"></i> Trilha Database
-          </button>
+        <div id="listaTrilhas" class="trilhas-menu">
+          <!-- Trilhas serão carregadas dinamicamente aqui -->
         </div>
       </div>
     </aside>
 
     <!-- Conteúdo Principal -->
     <main class="content">
-      <section id="conteudoTrilha" class="trilha-content"></section>
+      <section id="conteudoTrilha" class="trilha-content">
+        <!-- Detalhes da trilha ou etapas serão exibidos aqui -->
+      </section>
 
       <!-- Status e Missões -->
       <section class="missions">
