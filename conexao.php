@@ -2,7 +2,6 @@
 require_once 'includes/config.php';
 
 try {
-    // Consulta para buscar trilhas, etapas e perguntas
     $query = "
         SELECT 
             t.id AS trilha_id, t.nome AS trilha_nome, t.descricao AS trilha_descricao,
@@ -19,7 +18,6 @@ try {
     $stmt = $pdo->query($query);
     $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Estrutura os dados em um formato hierárquico
     $trilhas = [];
     foreach ($resultados as $row) {
         $trilhaId = $row['trilha_id'];
@@ -44,14 +42,13 @@ try {
         if ($row['pergunta_id']) {
             $trilhas[$trilhaId]['etapas'][$etapaId]['perguntas'][] = [
                 'tipo' => $row['pergunta_tipo'],
-                'pergunta' => $row['pergunta_enunciado'],
-                'resposta' => $row['pergunta_resposta'],
+                'enunciado' => $row['pergunta_enunciado'],
+                'resposta_correta' => $row['pergunta_resposta'],
                 'opcoes' => $row['pergunta_opcoes'] ? json_decode($row['pergunta_opcoes'], true) : []
             ];
         }
     }
 
-    // Remove os índices numéricos das etapas
     foreach ($trilhas as &$trilha) {
         $trilha['etapas'] = array_values($trilha['etapas']);
     }
