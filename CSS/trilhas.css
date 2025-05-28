@@ -1402,3 +1402,72 @@ header {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Estilos para as perguntas com lacunas */
+.enunciado-lacunas {
+  line-height: 2;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.lacuna {
+  display: inline-block;
+  min-width: 80px;
+  border-bottom: 2px solid #4a6fa5;
+  text-align: center;
+  margin: 0 5px;
+  padding: 0 5px;
+  vertical-align: middle;
+}
+
+.lacuna-hover {
+  background-color: #f0f8ff;
+}
+
+.lacuna.correta {
+  border-bottom-color: #4CAF50;
+  color: #4CAF50;
+}
+
+.lacuna.incorreta {
+  border-bottom-color: #F44336;
+  color: #F44336;
+}
+
+.palavras-disponiveis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.palavra {
+  padding: 8px 15px;
+  background-color: #e0e7ff;
+  border-radius: 20px;
+  cursor: grab;
+  user-select: none;
+  transition: all 0.2s;
+}
+
+.palavra.invisivel {
+  opacity: 0.3;
+}
+
+.palavra:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+
+.botao-verificar {
+  background-color: #4a6fa5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+.botao-verificar:hover {
+  background-color: #3a5a80;
+}
