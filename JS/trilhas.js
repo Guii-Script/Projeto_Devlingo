@@ -31,11 +31,24 @@ function renderizarTrilhas() {
 
   Object.values(window.trilhas).forEach(trilha => {
     const trilhaDiv = document.createElement('div');
-    trilhaDiv.className = 'trilha-item';
+    trilhaDiv.className = 'trilha-item animated fadeIn';
     trilhaDiv.innerHTML = `
-      <h3>${trilha.nome}</h3>
-      <p>${trilha.descricao}</p>
-      <button class="botao-trilha" data-trilha="${trilha.nome}">Abrir Trilha</button>
+      <div class="trilha-item-header">
+        <i class="fas fa-${trilha.icone || 'book'}"></i>
+        <h3>${trilha.nome}</h3>
+      </div>
+      <p class="trilha-desc">${trilha.descricao}</p>
+      <div class="trilha-meta">
+        <span class="trilha-dificuldade ${trilha.dificuldade}">
+          <i class="fas fa-${trilha.dificuldade === 'Iniciante' ? 'seedling' : 
+                             trilha.dificuldade === 'Intermediário' ? 'chart-line' : 
+                             'fire'}"></i> ${trilha.dificuldade}
+        </span>
+        <span class="trilha-tempo"><i class="far fa-clock"></i> ${trilha.duracao || '30min'}</span>
+      </div>
+      <button class="botao-trilha pulse-on-hover" data-trilha="${trilha.nome}">
+        <i class="fas fa-play"></i> Começar
+      </button>
     `;
     listaTrilhas.appendChild(trilhaDiv);
   });
@@ -61,14 +74,44 @@ function abrirTrilha(trilhaNome) {
 
   const conteudoTrilha = document.getElementById('conteudoTrilha');
   conteudoTrilha.innerHTML = `
-    <h2>${trilhaAtual.nome}</h2>
-    <p>${trilhaAtual.descricao}</p>
-    <div class="etapas-container">
+    <div class="trilha-header animated fadeIn">
+      <div class="trilha-breadcrumb">
+        <span class="trilha-nome">${trilhaAtual.nome}</span>
+        <i class="fas fa-chevron-right"></i>
+        <span class="etapa-atual">Etapas</span>
+      </div>
+      <h2>${trilhaAtual.nome}</h2>
+      <p class="trilha-descricao">${trilhaAtual.descricao}</p>
+      <div class="trilha-stats">
+        <div class="stat-item">
+          <i class="fas fa-layer-group"></i>
+          <span>${trilhaAtual.etapas.length} Etapas</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-question-circle"></i>
+          <span>${trilhaAtual.etapas.reduce((acc, etapa) => acc + etapa.perguntas.length, 0)} Perguntas</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-award"></i>
+          <span>${trilhaAtual.xp || 100} XP</span>
+        </div>
+      </div>
+    </div>
+    <div class="etapas-container animated fadeInUp">
       ${trilhaAtual.etapas.map((etapa, index) => `
-        <div class="etapa-card">
-          <h3>${etapa.nome}</h3>
-          <p>${etapa.descricao}</p>
-          <button class="botao-etapa" data-etapa="${index}">Iniciar Etapa</button>
+        <div class="etapa-card ${index === 0 ? 'first' : ''} ${index === trilhaAtual.etapas.length - 1 ? 'last' : ''}">
+          <div class="etapa-numero">${index + 1}</div>
+          <div class="etapa-content">
+            <h3><i class="fas fa-${etapa.icone || 'tasks'}"></i> ${etapa.nome}</h3>
+            <p>${etapa.descricao}</p>
+            <div class="etapa-meta">
+              <span><i class="fas fa-question"></i> ${etapa.perguntas.length} perguntas</span>
+              <span><i class="fas fa-star"></i> ${etapa.dificuldade || 'Médio'}</span>
+            </div>
+            <button class="botao-etapa pulse-on-hover" data-etapa="${index}">
+              <i class="fas fa-play"></i> Iniciar
+            </button>
+          </div>
         </div>
       `).join('')}
     </div>
@@ -105,11 +148,16 @@ function exibirPerguntaAtual() {
 
   const conteudoTrilha = document.getElementById('conteudoTrilha');
   conteudoTrilha.innerHTML = `
-    <div class="cabecalho-pergunta">
-      <h2>${etapaAtual.nome}</h2>
-      <span class="contador">Pergunta ${perguntaAtual + 1} de ${etapaAtual.perguntas.length}</span>
+    <div class="pergunta-header animated fadeIn">
+      <div class="progress-container">
+        <div class="progress-bar" style="width: ${(perguntaAtual / etapaAtual.perguntas.length) * 100}%"></div>
+      </div>
+      <div class="pergunta-info">
+        <span class="etapa-nome">${etapaAtual.nome}</span>
+        <span class="pergunta-contador">Pergunta ${perguntaAtual + 1} de ${etapaAtual.perguntas.length}</span>
+      </div>
     </div>
-    <div class="pergunta-container" id="perguntaContainer"></div>
+    <div class="pergunta-container animated fadeInUp" id="perguntaContainer"></div>
   `;
 
   const container = document.getElementById('perguntaContainer');
@@ -133,15 +181,27 @@ function exibirPerguntaAtual() {
       <div class="enunciado-lacunas">
         ${partes.map((parte, i) => `
           <span>${parte}</span>
-          ${i < partes.length - 1 ? `<span class="lacuna" data-resposta="${pergunta.resposta_correta}">______</span>` : ''}
+          ${i < partes.length - 1 ? `
+            <div class="lacuna-container">
+              <span class="lacuna" data-resposta="${pergunta.resposta_correta}">
+                <span class="lacuna-placeholder">______</span>
+              </span>
+              <span class="lacuna-indice">${i + 1}</span>
+            </div>
+          ` : ''}
         `).join('')}
       </div>
       <div class="palavras-disponiveis">
         ${opcoes.map(palavra => `
-          <div class="palavra" draggable="true">${palavra}</div>
+          <div class="palavra" draggable="true">
+            <i class="fas fa-grip-vertical"></i>
+            <span>${palavra}</span>
+          </div>
         `).join('')}
       </div>
-      <button class="botao-verificar">Verificar Resposta</button>
+      <button class="botao-verificar pulse-on-hover">
+        <i class="fas fa-check"></i> Verificar Resposta
+      </button>
     `;
 
     // Configura drag and drop
@@ -154,11 +214,20 @@ function exibirPerguntaAtual() {
   // Sistema de Múltipla Escolha
   else if (pergunta.tipo === 'multipla-escolha') {
     container.innerHTML = `
-      <p class="enunciado">${pergunta.enunciado}</p>
-      <div class="opcoes-resposta">
-        ${opcoes.map(opcao => `
-          <button class="opcao" data-opcao="${opcao}">${opcao}</button>
-        `).join('')}
+      <div class="pergunta-multipla-escolha">
+        <div class="enunciado">
+          <p>${pergunta.enunciado}</p>
+        </div>
+        <div class="opcoes-resposta">
+          ${opcoes.map(opcao => `
+            <button class="opcao pulse-on-hover" data-opcao="${opcao}">
+              <span class="opcao-indice">${String.fromCharCode(65 + opcoes.indexOf(opcao))}</span>
+              <span class="opcao-texto">${opcao}</span>
+              <i class="fas fa-check opcao-correta"></i>
+              <i class="fas fa-times opcao-incorreta"></i>
+            </button>
+          `).join('')}
+        </div>
       </div>
     `;
 
@@ -180,13 +249,14 @@ function configurarArrastarPalavras() {
 
   palavras.forEach(palavra => {
     palavra.addEventListener('dragstart', (e) => {
-      arrastandoPalavra = palavra.textContent;
+      arrastandoPalavra = palavra.textContent.trim();
       e.dataTransfer.setData('text/plain', palavra.textContent);
+      palavra.classList.add('dragging');
       setTimeout(() => palavra.classList.add('invisivel'), 0);
     });
 
     palavra.addEventListener('dragend', () => {
-      palavra.classList.remove('invisivel');
+      palavra.classList.remove('dragging', 'invisivel');
     });
   });
 
@@ -203,8 +273,10 @@ function configurarArrastarPalavras() {
     lacuna.addEventListener('drop', (e) => {
       e.preventDefault();
       lacuna.classList.remove('lacuna-hover');
-      lacuna.textContent = arrastandoPalavra;
-      lacuna.dataset.preenchido = arrastandoPalavra;
+      
+      const palavraArrastada = e.dataTransfer.getData('text/plain').trim();
+      lacuna.innerHTML = `<span class="palavra-preenchida">${palavraArrastada}</span>`;
+      lacuna.dataset.preenchido = palavraArrastada;
     });
   });
 }
@@ -241,13 +313,17 @@ function verificarRespostaLacuna() {
 
 // Verifica respostas de múltipla escolha
 function verificarRespostaMultiplaEscolha(correta) {
+  const opcaoSelecionada = event.currentTarget;
+  
   if (correta) {
+    opcaoSelecionada.classList.add('correta');
     mostrarFeedback('Resposta correta!', true);
     setTimeout(() => {
       perguntaAtual++;
       exibirPerguntaAtual();
     }, 1500);
   } else {
+    opcaoSelecionada.classList.add('incorreta');
     mostrarFeedback('Resposta incorreta! Tente novamente.', false);
   }
 }
@@ -256,12 +332,29 @@ function verificarRespostaMultiplaEscolha(correta) {
 function exibirResultadoFinal() {
   const conteudoTrilha = document.getElementById('conteudoTrilha');
   conteudoTrilha.innerHTML = `
-    <div class="resultado-final">
-      <h2>🎉 Parabéns!</h2>
-      <p>Você completou a etapa "${etapaAtual.nome}"</p>
-      <button class="botao-voltar" onclick="abrirTrilha('${trilhaAtual.nome}')">
-        Voltar para a Trilha
-      </button>
+    <div class="resultado-final animated fadeIn">
+      <div class="resultado-content">
+        <div class="resultado-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <h2>Etapa Concluída!</h2>
+        <p class="resultado-mensagem">Você completou a etapa "${etapaAtual.nome}" com sucesso!</p>
+        
+        <div class="resultado-stats">
+          <div class="stat-item">
+            <i class="fas fa-check-circle"></i>
+            <span>${etapaAtual.perguntas.length} de ${etapaAtual.perguntas.length} perguntas</span>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-star"></i>
+            <span>${etapaAtual.perguntas.length * 10} XP ganhos</span>
+          </div>
+        </div>
+        
+        <button class="botao-voltar pulse-on-hover" onclick="abrirTrilha('${trilhaAtual.nome}')">
+          <i class="fas fa-arrow-left"></i> Voltar para a Trilha
+        </button>
+      </div>
     </div>
   `;
 }
@@ -269,7 +362,7 @@ function exibirResultadoFinal() {
 // Mostra feedback visual
 function mostrarFeedback(mensagem, sucesso) {
   const feedback = document.createElement('div');
-  feedback.className = `feedback ${sucesso ? 'sucesso' : 'erro'}`;
+  feedback.className = `feedback animated fadeInDown ${sucesso ? 'sucesso' : 'erro'}`;
   feedback.innerHTML = `
     <i class="fas ${sucesso ? 'fa-check-circle' : 'fa-times-circle'}"></i>
     <span>${mensagem}</span>
@@ -278,7 +371,8 @@ function mostrarFeedback(mensagem, sucesso) {
   document.body.appendChild(feedback);
   
   setTimeout(() => {
-    feedback.remove();
+    feedback.classList.add('fadeOutUp');
+    setTimeout(() => feedback.remove(), 500);
   }, 2000);
 }
 
