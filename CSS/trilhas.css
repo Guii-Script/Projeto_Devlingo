@@ -2093,3 +2093,80 @@ header {
 .feedback i {
   font-size: 1.2rem;
 }
+
+/* Efeitos de dano */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+@keyframes flash-red {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(255, 0, 0, 0.3); }
+}
+
+.dano-effect {
+  animation: shake 0.5s, flash-red 0.5s;
+}
+
+.recarga-vidas {
+  pointer-events: none;
+  opacity: 0.7;
+  position: relative;
+}
+
+.recarga-vidas::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.tempo-recarga {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 11;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Estilos para o streak */
+#streak {
+  transition: all 0.3s ease;
+}
+
+.streak-medium {
+  color: #ff9a3c;
+  text-shadow: 0 0 5px rgba(255, 154, 60, 0.5);
+}
+
+.streak-high {
+  color: #ff3c3c;
+  text-shadow: 0 0 10px rgba(255, 60, 60, 0.7);
+  animation: pulse 0.5s infinite alternate;
+}
+
+/* Ícone de fogo animado quando há streak */
+.streak-medium ~ .icone i.fa-fire,
+.streak-high ~ .icone i.fa-fire {
+  animation: pulse 0.5s infinite;
+}
+
+.streak-high ~ .icone i.fa-fire {
+  color: #ff3c3c;
+}
+
+.feedback.sucesso::after {
+  content: " +X gemas";
+  font-weight: bold;
+  color: gold;
+  text-shadow: 0 0 3px rgba(0,0,0,0.5);
+}

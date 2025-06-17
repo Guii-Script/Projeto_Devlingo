@@ -378,3 +378,179 @@ function mostrarFeedback(mensagem, sucesso) {
 
 // Inicializa tudo quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', carregarTrilhas);
+
+let vidas = 3;
+let tempoRecarga = null;
+let intervaloRecarga = null;
+
+// Função para atualizar a exibição das vidas
+function atualizarVidas() {
+  const elementoVidas = document.getElementById('vidas');
+  if (elementoVidas) {
+    elementoVidas.textContent = vidas;
+  }
+}
+
+// Função para aplicar dano (perder vida)
+function aplicarDano() {
+  if (vidas <= 0 || document.body.classList.contains('recarga-vidas')) return;
+
+  vidas--;
+  atualizarVidas();
+
+  // Aplica efeitos visuais
+  document.body.classList.add('dano-effect');
+  setTimeout(() => {
+    document.body.classList.remove('dano-effect');
+  }, 500);
+
+  // Verifica se as vidas chegaram a zero
+  if (vidas <= 0) {
+    iniciarRecargaVidas();
+  }
+}
+
+// Função para iniciar recarga de vidas
+function iniciarRecargaVidas() {
+  const tempoTotalRecarga = 60; // 1 minuto em segundos
+  let tempoRestante = tempoTotalRecarga;
+
+  // Aplica classe de recarga
+  document.body.classList.add('recarga-vidas');
+  
+  // Cria elemento de contagem regressiva
+  const tempoElement = document.createElement('div');
+  tempoElement.className = 'tempo-recarga';
+  tempoElement.textContent = formatarTempo(tempoRestante);
+  document.body.appendChild(tempoElement);
+
+  // Atualiza o timer a cada segundo
+  intervaloRecarga = setInterval(() => {
+    tempoRestante--;
+    tempoElement.textContent = formatarTempo(tempoRestante);
+
+    if (tempoRestante <= 0) {
+      clearInterval(intervaloRecarga);
+      vidas = 3;
+      atualizarVidas();
+      document.body.classList.remove('recarga-vidas');
+      tempoElement.remove();
+    }
+  }, 1000);
+}
+
+// Função auxiliar para formatar tempo (MM:SS)
+function formatarTempo(segundos) {
+  const mins = Math.floor(segundos / 60);
+  const secs = segundos % 60;
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Modifique a função verificarRespostaMultiplaEscolha
+function verificarRespostaMultiplaEscolha(correta) {
+  const opcaoSelecionada = event.currentTarget;
+  
+  if (correta) {
+    opcaoSelecionada.classList.add('correta');
+    mostrarFeedback('Resposta correta!', true);
+    streak++; // Incrementa o streak
+    atualizarStreak();
+    setTimeout(() => {
+      perguntaAtual++;
+      exibirPerguntaAtual();
+    }, 1500);
+  } else {
+    opcaoSelecionada.classList.add('incorreta');
+    mostrarFeedback('Resposta incorreta! Tente novamente.', false);
+    streak = 0; // Zera o streak
+    atualizarStreak();
+    aplicarDano();
+  }
+}
+
+function verificarRespostaLacuna() {
+  const lacunas = document.querySelectorAll('.lacuna');
+  let todasCorretas = true;
+
+  lacunas.forEach(lacuna => {
+    const respostaUsuario = lacuna.dataset.preenchido;
+    const respostaCorreta = lacuna.dataset.resposta;
+
+    if (respostaUsuario && respostaUsuario.toLowerCase() === respostaCorreta.toLowerCase()) {
+      lacuna.classList.add('correta');
+      lacuna.classList.remove('incorreta');
+    } else {
+      lacuna.classList.add('incorreta');
+      lacuna.classList.remove('correta');
+      todasCorretas = false;
+    }
+  });
+
+  if (todasCorretas) {
+    mostrarFeedback('Resposta correta!', true);
+    streak++; // Incrementa o streak
+    atualizarStreak();
+    setTimeout(() => {
+      perguntaAtual++;
+      exibirPerguntaAtual();
+    }, 1500);
+  } else {
+    mostrarFeedback('Algumas respostas estão incorretas!', false);
+    streak = 0; // Zera o streak
+    atualizarStreak();
+    aplicarDano();
+  }
+}
+
+// Modifique a função verificarRespostaLacuna
+function verificarRespostaLacuna() {
+  const lacunas = document.querySelectorAll('.lacuna');
+  let todasCorretas = true;
+
+  lacunas.forEach(lacuna => {
+    const respostaUsuario = lacuna.dataset.preenchido;
+    const respostaCorreta = lacuna.dataset.resposta;
+
+    if (respostaUsuario && respostaUsuario.toLowerCase() === respostaCorreta.toLowerCase()) {
+      lacuna.classList.add('correta');
+      lacuna.classList.remove('incorreta');
+    } else {
+      lacuna.classList.add('incorreta');
+      lacuna.classList.remove('correta');
+      todasCorretas = false;
+    }
+  });
+
+  if (todasCorretas) {
+    mostrarFeedback('Resposta correta!', true);
+    setTimeout(() => {
+      perguntaAtual++;
+      exibirPerguntaAtual();
+    }, 1500);
+  } else {
+    mostrarFeedback('Algumas respostas estão incorretas!', false);
+    aplicarDano(); // Adiciona esta linha para aplicar dano ao errar
+  }
+}
+
+// Adicione esta linha no final da função carregarTrilhas para inicializar as vidas
+atualizarVidas();
+
+
+let streak = 0; // Variável para contar a sequência de acertos
+
+function atualizarStreak() {
+  const elementoStreak = document.getElementById('streak');
+  if (elementoStreak) {
+    elementoStreak.textContent = streak;
+    
+    // Adiciona classes baseadas no valor do streak para efeitos visuais
+    elementoStreak.className = '';
+    if (streak >= 3) {
+      elementoStreak.classList.add('streak-high');
+    } else if (streak >= 1) {
+      elementoStreak.classList.add('streak-medium');
+    }
+  }
+}
+
