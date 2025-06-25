@@ -23,7 +23,7 @@
       <a href="#about">SOBRE</a>
     </nav>
     
-    <a href="login.html" class="cta-button">Entrar</a>
+    <a href="login.php" class="cta-button">Entrar</a>
   </header>
 
   <!-- Hero Section -->
@@ -33,7 +33,7 @@
         <h1>Aprenda programação de forma gamificada</h1>
         <p>Domine as linguagens de programação mais demandadas do mercado enquanto se diverte com desafios, conquistas e recompensas.</p>
         <div class="hero-buttons">
-          <a href="cadastro.html" class="cta-button">Comece Agora</a>
+          <a href="cadastro.php" class="cta-button">Comece Agora</a>
           <a href="#features" class="secondary-button">Saiba Mais</a>
         </div>
       </div>
@@ -225,7 +225,7 @@
     <div class="cta-container">
       <h2>Pronto para transformar seu aprendizado?</h2>
       <p>Junte-se a milhares de desenvolvedores que estão acelerando suas carreiras com o DevLingo.</p>
-      <a href="cadastro.html" class="cta-button">Comece Agora - É Grátis!</a>
+      <a href="cadastro.php" class="cta-button">Comece Agora - É Grátis!</a>
     </div>
   </section>
 
