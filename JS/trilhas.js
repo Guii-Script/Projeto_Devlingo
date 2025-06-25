@@ -13,7 +13,7 @@ let moedas = 0;
 
 // Controle do Timer de Vidas
 let intervaloRecarga = null;
-const TEMPO_TOTAL_RECARGA = 60; // 60 segundos
+const TEMPO_TOTAL_RECARGA = 5; // 60 segundos
 
 
 // ===============================================
