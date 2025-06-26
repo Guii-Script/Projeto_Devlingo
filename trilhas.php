@@ -45,7 +45,7 @@
       <nav>
         <a href="homepage.php"><i class="fas fa-question-circle"></i> HOMEPAGE</a>
         <a href="#"><i class="fas fa-book"></i> CURSOS</a>
-        <a href="#"><i class="fas fa-user"></i> PERFIL</a>
+        <a href="perfil.php"><i class="fas fa-user"></i> PERFIL</a>
         <a href="logout.php"><i class="fas fa-sign-out-alt"></i> SAIR</a>
         <img src="https://i.imgur.com/W8yZNOX.png" alt="Avatar" class="avatar">
       </nav>
@@ -65,12 +65,12 @@
 
       <section class="missions">
         <div class="status-container">
-          <div class="status-jogador" 
-               data-vidas="<?php echo $vidas; ?>" 
-               data-streak="<?php echo $streak; ?>" 
+          <div class="status-jogador"
+               data-vidas="<?php echo $vidas; ?>"
+               data-streak="<?php echo $streak; ?>"
                data-moedas="<?php echo $moedas; ?>"
                data-tempo-recarga="<?php echo $tempo_recarga; ?>">
-            
+
             <div class="status-item">
               <span class="icone"><i class="fas fa-heart"></i></span>
               <span id="vidas"><?php echo $vidas; ?></span>
@@ -84,18 +84,11 @@
               <span id="moedas"><?php echo $moedas; ?></span>
             </div>
           </div>
-          
-          <div class="missao-card">
-            <h3><i class="fas fa-calendar-day"></i> Missão Diária</h3>
-            <p>Conclua uma lição</p>
-            <div class="barra-progresso"><div class="barra-preenchida" style="width: 50%;"></div></div>
-          </div>
-          
-          <div class="missao-card">
-            <h3><i class="fas fa-calendar-week"></i> Missão Semanal</h3>
-            <p>Complete uma trilha</p>
-            <div class="barra-progresso"><div class="barra-preenchida" style="width: 10%;"></div></div>
-          </div>
+
+          <div id="missoesDiariasContainer">
+            </div>
+
+
         </div>
       </section>
     </main>

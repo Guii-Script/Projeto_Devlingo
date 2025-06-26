@@ -23,7 +23,7 @@
   <div class="container-perfil">
     <div class="menu-perfil">
       <img src="imagens/pato2.png" alt="Avatar">
-      <h2>Chris Evans</h2>
+      <h2>???</h2>
       <blockquote>"Um espírito nobre engrandece o menor dos homens."</blockquote>
 
       <div class="grupo-formulario">

@@ -2259,3 +2259,66 @@ header {
   color: #555;
   font-size: 1.1rem;
 }
+
+/* Estilos Adicionais para Missões */
+
+#missoesDiariasContainer h3 {
+  color: var(--cor-primaria);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--cor-borda);
+  padding-bottom: 0.8rem;
+}
+
+#missoesDiariasContainer .missao-card {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--cor-borda);
+}
+
+#missoesDiariasContainer .missao-card:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+#missoesDiariasContainer h4 {
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+#missoesDiariasContainer h4 i {
+  color: var(--cor-primaria);
+  margin-left: 0.5rem;
+}
+
+#missoesDiariasContainer p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.8rem;
+}
+
+#missoesDiariasContainer p i {
+    font-size: 0.8rem;
+    color: gold;
+}
+
+.progresso-texto {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: right;
+  display: block;
+  margin-top: 0.3rem;
+}
+
+.missao-card.concluida {
+  opacity: 0.6;
+}
+
+.missao-card.concluida h4, .missao-card.concluida p {
+  text-decoration: line-through;
+}
