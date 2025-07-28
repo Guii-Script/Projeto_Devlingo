@@ -4,20 +4,25 @@
 
   // Verifica se o usuário está logado, senão, redireciona
   if (!isset($_SESSION['usuario_id'])) {
-      header('Location: login.php'); 
+      header('Location: login.php');
       exit();
   }
 
-  // Busca os dados atuais do usuário, incluindo a coluna tempo_recarga
-  $stmt = $pdo->prepare("SELECT vidas, streak, moedas, tempo_recarga FROM usuarios WHERE id = ?");
+  $usuario_id = $_SESSION['usuario_id']; // Define usuario_id para uso
+
+  // Busca os dados atuais do usuário, incluindo a coluna tempo_recarga e avatar
+  $stmt = $pdo->prepare("SELECT vidas, streak, moedas, tempo_recarga, avatar FROM usuarios WHERE id = ?");
   $stmt->execute([$_SESSION['usuario_id']]);
   $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-  // Define as variáveis que serão usadas no HTML
-  $vidas = $usuario ? $usuario['vidas'] : 3;
-  $streak = $usuario ? $usuario['streak'] : 0;
-  $moedas = $usuario ? $usuario['moedas'] : 0;
-  $tempo_recarga = $usuario ? $usuario['tempo_recarga'] : null;
+  // Define as variáveis que serão usadas no HTML, usando isset() para compatibilidade PHP < 7.0
+  $vidas = isset($usuario['vidas']) ? $usuario['vidas'] : 3;
+  $streak = isset($usuario['streak']) ? $usuario['streak'] : 0;
+  $moedas = isset($usuario['moedas']) ? $usuario['moedas'] : 0;
+  $tempo_recarga = isset($usuario['tempo_recarga']) ? $usuario['tempo_recarga'] : null;
+
+  // Define a variável $avatar_url para o header.php
+  $avatar_url = isset($usuario['avatar']) ? $usuario['avatar'] : 'https://i.imgur.com/W8yZNOX.png';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -40,17 +45,7 @@
       </div>
   </div>
 
-  <header>
-    <div class="header-content">
-      <nav>
-        <a href="homepage.php"><i class="fas fa-question-circle"></i> HOMEPAGE</a>
-        <a href="#"><i class="fas fa-book"></i> CURSOS</a>
-        <a href="perfil.php"><i class="fas fa-user"></i> PERFIL</a>
-        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> SAIR</a>
-        <img src="https://i.imgur.com/W8yZNOX.png" alt="Avatar" class="avatar">
-      </nav>
-    </div>
-  </header>
+  <?php include_once 'includes/header.php'; ?>
 
   <div class="main-container">
     <aside class="sidebar">
@@ -69,7 +64,7 @@
                data-vidas="<?php echo $vidas; ?>"
                data-streak="<?php echo $streak; ?>"
                data-moedas="<?php echo $moedas; ?>"
-               data-tempo-recarga="<?php echo $tempo_recarga; ?>">
+               data-tempo-recarga="<?php echo htmlspecialchars($tempo_recarga); ?>">
 
             <div class="status-item">
               <span class="icone"><i class="fas fa-heart"></i></span>
