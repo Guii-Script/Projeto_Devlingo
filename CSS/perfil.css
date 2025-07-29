@@ -8,40 +8,34 @@
   --cor-borda: rgba(46, 242, 170, 0.2);
 }
 
-/* --- ANIMAÇÕES (Copiadas e adaptadas de homepage.css e trilhas.css) --- */
+/* --- ANIMAÇÕES --- */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes slideDown { /* Para mensagens de feedback */
+@keyframes slideDown {
   from { transform: translateY(-50px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes pulse { /* Para elementos que chamam atenção (logo, ícones) */
+@keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
 
-@keyframes float { /* Para elementos de fundo/partículas */
+@keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }
 
-@keyframes shimmer { /* Para botões e barras de progresso */
+@keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
 
-@keyframes pulseBorder { /* Para bordas de cards selecionados ou importantes */
-  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 242, 170, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(46, 242, 170, 0); }
-}
-
-
-/* --- RESET E ESTILOS GLOBAIS --- */
+/* --- ESTILOS GLOBAIS --- */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -56,7 +50,9 @@ body {
   line-height: 1.6;
 }
 
-/* --- HEADER (Consistente com trilhas.css e homepage.css) --- */
+/* --- HEADER --- */
+/* O estilo do header agora deve vir do CSS global ou do CSS do próprio header, 
+   mas mantendo aqui para garantir a compatibilidade com sua visão. */
 header {
   position: fixed;
   top: 0;
@@ -74,107 +70,17 @@ header {
   border-bottom: 1px solid var(--cor-borda);
 }
 
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--cor-primaria);
-  text-decoration: none;
-}
-
-.logo i {
-  font-size: 1.8rem;
-  color: var(--cor-primaria);
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid var(--cor-primaria);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.avatar:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 15px var(--cor-primaria);
-}
-
-nav {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-nav a {
-  color: var(--cor-texto);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  position: relative;
-  padding: 0.5rem 0;
-}
-
-nav a:hover {
-  color: var(--cor-primaria);
-}
-
-nav a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: var(--cor-primaria);
-  transition: width 0.3s ease;
-}
-
-nav a:hover::after {
-  width: 100%;
-}
-
-.notification-badge { /* Se for usado para notificações futuras */
-  position: absolute;
-  top: -3px;
-  right: -3px;
-  width: 12px;
-  height: 12px;
-  background-color: #f22e2e;
-  border-radius: 50%;
-  border: 2px solid var(--cor-secundaria);
-  animation: pulse 1.5s infinite;
-}
-
 /* --- MAIN CONTAINER --- */
 .container-perfil {
-  margin-top: 72px; /* Espaço para o header fixo */
   padding: 2rem;
   display: flex;
   max-width: 1200px;
   margin: 72px auto 0;
   gap: 2rem;
-  animation: fadeIn 0.8s ease-out; /* Animação de entrada para toda a tela */
+  animation: fadeIn 0.8s ease-out;
 }
 
-/* --- MENU PERFIL (Left Sidebar-like) --- */
+/* --- MENU PERFIL (Esquerda) --- */
 .menu-perfil {
   width: 300px;
   background-color: var(--cor-card);
@@ -186,12 +92,11 @@ nav a:hover::after {
   align-items: center;
   gap: 1.5rem;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 1s ease-out; /* Animação de entrada */
+  animation: fadeIn 1s ease-out;
   position: relative;
-  overflow: hidden; /* Para as partículas */
+  overflow: hidden;
 }
 
-/* Partículas no menu (similar a trilhas.css) */
 .menu-perfil::before, .menu-perfil::after {
   content: '';
   position: absolute;
@@ -225,7 +130,7 @@ nav a:hover::after {
   object-fit: cover;
   border: 4px solid var(--cor-primaria);
   transition: all 0.3s ease;
-  z-index: 1; /* Para ficar acima das partículas */
+  z-index: 1;
 }
 
 .menu-perfil img:hover {
@@ -244,26 +149,6 @@ nav a:hover::after {
   animation: pulse 3s infinite;
   z-index: 1;
 }
-
-/* Bloco de citação (se for manter, estilizei como um card de texto) */
-.menu-perfil blockquote {
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.7);
-  text-align: center;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
-  padding: 0.8rem 1.2rem;
-  background-color: rgba(17, 54, 82, 0.3); /* Um fundo sutil */
-  border-radius: 8px;
-  border: 1px solid rgba(46, 242, 170, 0.1);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-.menu-perfil blockquote:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(46, 242, 170, 0.2);
-}
-
 
 .grupo-formulario {
   width: 100%;
@@ -324,7 +209,7 @@ nav a:hover::after {
   justify-content: center;
   gap: 0.5rem;
   position: relative;
-  overflow: hidden; /* Para o shimmer */
+  overflow: hidden;
 }
 
 .botao-salvar:hover {
@@ -332,7 +217,7 @@ nav a:hover::after {
   box-shadow: 0 8px 20px rgba(46, 242, 170, 0.5);
 }
 
-.botao-salvar::before { /* Efeito shimmer */
+.botao-salvar::before {
   content: '';
   position: absolute;
   top: 0;
@@ -357,6 +242,7 @@ nav a:hover::after {
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 0.9rem;
+  text-decoration: none;
 }
 
 .deletar-conta:hover {
@@ -374,7 +260,7 @@ nav a:hover::after {
   fill: #ff3b3b;
 }
 
-/* --- CONTEÚDO PRINCIPAL DO PERFIL (Right Main Content) --- */
+/* --- CONTEÚDO PERFIL (Direita) --- */
 .conteudo-perfil {
   flex: 1;
   background-color: var(--cor-card);
@@ -382,21 +268,7 @@ nav a:hover::after {
   border-radius: 16px;
   border: 1px solid var(--cor-borda);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 1.2s ease-out; /* Animação de entrada */
-  position: relative;
-  overflow: hidden;
-}
-
-.conteudo-perfil::before { /* Pattern de fundo */
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PGRlZnM+PHBhdHRlcm4gaWQ9InBhdHRlcm4iIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPb1VzZSIgcGF0dGVyblRyYW5zZm9ybT0icm90YXRlKDQ1KSI+PHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSJyZ2JhKDIzOCwyNDIsMTcwLDAuMDMpIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+');
-  z-index: 0;
-  opacity: 0.1;
+  animation: fadeIn 1.2s ease-out;
 }
 
 .conteudo-perfil h1 {
@@ -408,8 +280,6 @@ nav a:hover::after {
   background-clip: text;
   color: transparent;
   text-shadow: 0 0 10px rgba(46, 242, 170, 0.3);
-  animation: pulse 3s infinite ease-in-out; /* Animação para o título */
-  z-index: 1; /* Acima do background */
 }
 
 .section-titulo {
@@ -419,12 +289,11 @@ nav a:hover::after {
   margin-bottom: 1rem;
   border-bottom: 1px solid var(--cor-borda);
   padding-bottom: 0.5rem;
-  animation: fadeIn 1.4s ease-out; /* Animação de entrada */
 }
 
 .grid-dados {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 1.5rem;
 }
 
@@ -436,9 +305,6 @@ nav a:hover::after {
   text-align: center;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-  animation: fadeIn 1.6s ease-out; /* Animação de entrada */
 }
 
 .data-card:hover {
@@ -447,32 +313,10 @@ nav a:hover::after {
   border-color: var(--cor-primaria);
 }
 
-.data-card::before { /* Borda superior animada */
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, var(--cor-primaria), var(--cor-destaque));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s ease;
-}
-
-.data-card:hover::before {
-  transform: scaleX(1);
-}
-
 .data-card i {
   font-size: 2.5rem;
   color: var(--cor-primaria);
   margin-bottom: 0.5rem;
-  transition: all 0.3s ease;
-}
-
-.data-card:hover i {
-  transform: scale(1.1);
 }
 
 .data-card .valor {
@@ -485,7 +329,6 @@ nav a:hover::after {
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 /* --- SEÇÃO DE CONQUISTAS --- */
@@ -502,9 +345,6 @@ nav a:hover::after {
   border: 1px solid var(--cor-borda);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  animation: fadeIn 1.8s ease-out; /* Animação de entrada */
   text-align: left;
 }
 
@@ -514,39 +354,14 @@ nav a:hover::after {
   border-color: var(--cor-primaria);
 }
 
-.conquista-card::before { /* Borda superior animada */
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, var(--cor-primaria), var(--cor-destaque));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s ease;
-}
-
-.conquista-card:hover::before {
-  transform: scaleX(1);
-}
-
-
 .conquista-card .icon-conquista {
   font-size: 2.2rem;
   margin-bottom: 0.8rem;
   background: linear-gradient(45deg, var(--cor-primaria), var(--cor-destaque));
   -webkit-background-clip: text;
   background-clip: text;
-  color: transparent; /* Aplica o gradiente ao texto do ícone */
-  animation: float 2s infinite ease-in-out; /* Animação de flutuação */
-  transition: all 0.3s ease;
+  color: transparent;
 }
-
-.conquista-card:hover .icon-conquista {
-    animation: pulse 1s infinite; /* Pulsa ao hover */
-}
-
 
 .conquista-card h4 {
   font-size: 1.1rem;
@@ -561,106 +376,31 @@ nav a:hover::after {
 
 /* --- HISTÓRICO DE ATIVIDADE --- */
 .historico-atividade p {
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
-    line-height: 1.5;
-}
-
-.historico-atividade p:last-child {
-    margin-bottom: 0;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.5rem;
 }
 
 /* --- RESPONSIVIDADE --- */
 @media (max-width: 768px) {
-  header {
-    padding: 0 1.5rem;
-  }
-  
-  nav {
-    gap: 1rem;
-  }
-  
-  nav a span {
-    display: none; /* Esconde o texto dos links da nav para ícones em telas pequenas */
-  }
-
-  .logo {
-    font-size: 1.3rem;
-  }
-
-  .logo i {
-    font-size: 1.5rem;
-  }
-  
   .container-perfil {
-    flex-direction: column; /* Empilha os blocos verticalmente */
-    padding: 1.5rem; /* Ajusta o padding geral */
+    flex-direction: column;
+    padding: 1.5rem;
   }
   
   .menu-perfil {
-    width: 100%; /* Ocupa a largura total */
-    order: 2; /* Move o menu para baixo em mobile se desejar */
+    width: 100%;
   }
 
   .conteudo-perfil {
-    order: 1; /* Move o conteúdo para cima em mobile se desejar */
     padding: 1.5rem;
   }
 
   .conteudo-perfil h1 {
-    font-size: 1.8rem; /* Ajusta o tamanho do título */
-  }
-  .menu-perfil::before, .menu-perfil::after { /* Reduz o tamanho das partículas em mobile */
-    width: 40px;
-    height: 40px;
-  }
-  .section-titulo {
-    font-size: 1.3rem;
+    font-size: 2rem;
   }
 }
 
 @media (max-width: 480px) {
-  header {
-    padding: 0 1rem;
-    height: auto;
-    flex-wrap: wrap;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .avatar {
-    width: 35px;
-    height: 35px;
-  }
-
-  nav {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.8rem;
-  }
-  
-  .container-perfil {
-    padding: 1rem;
-  }
-
-  .menu-perfil {
-    padding: 1.5rem;
-  }
-
-  .menu-perfil h2 {
-    font-size: 1.5rem;
-  }
-
-  .conteudo-perfil h1 {
-    font-size: 1.5rem;
-  }
-
   .grid-dados, .conquistas-grid {
     grid-template-columns: 1fr;
   }

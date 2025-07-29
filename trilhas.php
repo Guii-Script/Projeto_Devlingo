@@ -50,7 +50,6 @@
   <div class="main-container">
     <aside class="sidebar">
       <div class="sidebar-content">
-        <h2 class="logo"><i class="fas fa-code"></i> Dev_lingo</h2>
         <div id="listaTrilhas" class="trilhas-menu"></div>
       </div>
     </aside>
