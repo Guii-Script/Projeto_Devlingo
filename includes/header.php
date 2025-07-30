@@ -246,7 +246,6 @@ if (!isset($avatar_url)) {
             <span>Dev_lingo</span>
         </a>
         <nav>
-            <a href="homepage.php"><i class="fas fa-home"></i> <span>HOMEPAGE</span></a>
             <a href="cursos.php"><i class="fas fa-book"></i> <span>CURSOS</span></a>
             <a href="trilhas.php"><i class="fas fa-rocket"></i> <span>TRILHAS</span></a>
             <a href="perfil.php"><i class="fas fa-user"></i> <span>PERFIL</span></a>
