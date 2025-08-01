@@ -8,47 +8,68 @@
   }
   $usuario_id = $_SESSION['usuario_id'];
 
-  // 2. LÓGICA PARA ATUALIZAR O NOME
-  if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['salvar_perfil'])) {
-      $novo_nome = trim($_POST['nome'] ?? '');
+  // Array de avatares pré-definidos
+  $avatares_permitidos = [
+      'imagens/foto_perfil/royalepato.png', 'imagens/foto_perfil/buddhapato.png',
+      'imagens/foto_perfil/counterpato.png', 'https://i.imgur.com/gJk4s5d.png',
+      'imagens/foto_perfil/venompato.png', 'https://i.imgur.com/y1g2f6b.png',
+  ];
 
-      if (!empty($novo_nome)) {
-          $stmt_update = $pdo->prepare("UPDATE usuarios SET nome = ? WHERE id = ?");
-          if ($stmt_update->execute([$novo_nome, $usuario_id])) {
-              $_SESSION['sucesso_perfil'] = "Perfil atualizado com sucesso!";
-          } else {
-              $_SESSION['erro_perfil'] = "Erro ao atualizar o perfil.";
+  // 2. PROCESSAMENTO DE FORMULÁRIOS (POST)
+  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      // --- ATUALIZAR NOME E AVATAR ---
+      if (isset($_POST['salvar_perfil'])) {
+          $novo_nome = trim($_POST['nome'] ?? '');
+          $novo_avatar = $_POST['avatar'] ?? '';
+
+          if (!empty($novo_nome)) {
+              $pdo->prepare("UPDATE usuarios SET nome = ? WHERE id = ?")->execute([$novo_nome, $usuario_id]);
           }
-      } else {
-          $_SESSION['erro_perfil'] = "O nome não pode estar vazio.";
+          if (!empty($novo_avatar) && in_array($novo_avatar, $avatares_permitidos)) {
+              $pdo->prepare("UPDATE usuarios SET avatar = ? WHERE id = ?")->execute([$novo_avatar, $usuario_id]);
+          }
+          $_SESSION['sucesso_perfil'] = "Perfil atualizado com sucesso!";
+          header('Location: perfil.php');
+          exit();
       }
-      header('Location: perfil.php');
-      exit();
+
+      // --- DELETAR CONTA ---
+      if (isset($_POST['deletar_conta_confirmado'])) {
+          try {
+              $pdo->prepare("DELETE FROM usuarios WHERE id = ?")->execute([$usuario_id]);
+              session_unset();
+              session_destroy();
+              header('Location: login.php?status=deletado');
+              exit();
+          } catch (Exception $e) {
+              $_SESSION['erro_perfil'] = "Erro ao deletar a conta.";
+              header('Location: perfil.php');
+              exit();
+          }
+      }
   }
 
-  // 3. BUSCAR DADOS DO USUÁRIO PARA EXIBIÇÃO
-  $stmt = $pdo->prepare("SELECT id, nome, email, avatar, moedas, streak, vidas FROM usuarios WHERE id = ?");
-  $stmt->execute([$usuario_id]);
-  $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+  // 3. BUSCAR DADOS DO USUÁRIO
+  $usuario = $pdo->prepare("SELECT nome, avatar, moedas, streak, vidas FROM usuarios WHERE id = ?");
+  $usuario->execute([$usuario_id]);
+  $usuario_data = $usuario->fetch(PDO::FETCH_ASSOC);
 
-  // Define valores padrão para evitar erros
-  $nome_usuario_db = $usuario['nome'] ?? 'Usuário Devlingo';
-  $avatar_url = $usuario['avatar'] ?? 'https://i.imgur.com/W8yZNOX.png';
-  $moedas = $usuario['moedas'] ?? 0;
-  $streak = $usuario['streak'] ?? 0;
-  $vidas = $usuario['vidas'] ?? 3;
+  $nome_usuario_db = $usuario_data['nome'] ?? 'Usuário Devlingo';
+  $avatar_url = $usuario_data['avatar'] ?? $avatares_permitidos[0];
+  $moedas = $usuario_data['moedas'] ?? 0;
+  $streak = $usuario_data['streak'] ?? 0;
+  $vidas = $usuario_data['vidas'] ?? 3;
 
-  // 4. BUSCAR ESTATÍSTICAS DINÂMICAS (CURSOS CONCLUÍDOS)
-  $stmt_cursos = $pdo->prepare("SELECT COUNT(*) FROM usuario_trilhas WHERE usuario_id = ? AND concluida = 1");
-  $stmt_cursos->execute([$usuario_id]);
-  $cursos_concluidos = $stmt_cursos->fetchColumn();
+  // 4. BUSCAR ESTATÍSTICAS (CURSOS E CONQUISTAS)
+  $cursos_concluidos = $pdo->prepare("SELECT COUNT(*) FROM usuario_trilhas WHERE usuario_id = ? AND concluida = 1");
+  $cursos_concluidos->execute([$usuario_id]);
+  $cursos_concluidos_total = $cursos_concluidos->fetchColumn();
 
-  // 5. BUSCAR CONQUISTAS DO USUÁRIO
-  $stmt_conquistas = $pdo->prepare("SELECT c.nome, c.descricao, c.icone FROM usuario_conquistas uc JOIN conquistas c ON uc.conquista_id = c.id WHERE uc.usuario_id = ? ORDER BY uc.data_conquista DESC");
-  $stmt_conquistas->execute([$usuario_id]);
-  $conquistas_usuario = $stmt_conquistas->fetchAll(PDO::FETCH_ASSOC);
+  $conquistas = $pdo->prepare("SELECT c.nome, c.descricao, c.icone FROM usuario_conquistas uc JOIN conquistas c ON uc.conquista_id = c.id WHERE uc.usuario_id = ? ORDER BY uc.data_conquista DESC");
+  $conquistas->execute([$usuario_id]);
+  $conquistas_usuario = $conquistas->fetchAll(PDO::FETCH_ASSOC);
 
-  // 6. PREPARAR MENSAGENS DE FEEDBACK
+  // 5. MENSAGENS DE FEEDBACK
   $mensagem_sucesso = $_SESSION['sucesso_perfil'] ?? '';
   $mensagem_erro = $_SESSION['erro_perfil'] ?? '';
   unset($_SESSION['sucesso_perfil'], $_SESSION['erro_perfil']);
@@ -69,48 +90,38 @@
 
   <div class="container-perfil">
     <div class="menu-perfil">
-      <img src="<?= htmlspecialchars($avatar_url) ?>" alt="Avatar do Usuário">
+      <div class="avatar-container">
+        <img src="<?= htmlspecialchars($avatar_url) ?>" alt="Avatar do Usuário" id="avatar-principal">
+        <button class="botao-editar-avatar" id="abrir-modal-avatar" title="Editar Avatar">
+          <i class="fas fa-camera"></i>
+        </button>
+      </div>
       <h2><?= htmlspecialchars($nome_usuario_db) ?></h2>
 
-      <form method="POST" action="perfil.php">
+      <form method="POST" action="perfil.php" id="form-perfil">
         <div class="grupo-formulario">
-          <label for="nome">Nome de Usuário <span class="etiqueta-editor">Editor</span></label>
+          <label for="nome">Nome de Usuário</label>
           <input type="text" id="nome" name="nome" value="<?= htmlspecialchars($nome_usuario_db) ?>">
         </div>
-        <button type="submit" name="salvar_perfil" class="botao-salvar">SALVAR <i class="fas fa-check"></i></button>
+        <input type="hidden" name="avatar" id="avatar-selecionado-input" value="<?= htmlspecialchars($avatar_url) ?>">
+        <button type="submit" name="salvar_perfil" class="botao-salvar">SALVAR ALTERAÇÕES</button>
       </form>
 
-      <a href="#" class="deletar-conta">
-        Deletar minha conta
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M3 6l3 18h12l3-18H3zm18-4H3v2h18V2z"/></svg>
-      </a>
+      <button class="deletar-conta" id="abrir-modal-delecao">
+        <i class="fas fa-trash-alt"></i> Deletar minha conta
+      </button>
     </div>
 
     <div class="conteudo-perfil">
       <h1>Estatísticas</h1>
       <div class="grid-dados">
-        <div class="data-card">
-          <i class="fas fa-heart"></i>
-          <div class="valor"><?= htmlspecialchars($vidas) ?></div>
-          <div class="rotulo">Vidas</div>
-        </div>
-        <div class="data-card">
-          <i class="fas fa-fire"></i>
-          <div class="valor"><?= htmlspecialchars($streak) ?></div>
-          <div class="rotulo">Sequência</div>
-        </div>
-        <div class="data-card">
-          <i class="fas fa-gem"></i>
-          <div class="valor"><?= htmlspecialchars($moedas) ?></div>
-          <div class="rotulo">Gemas</div>
-        </div>
-        <div class="data-card">
-          <i class="fas fa-book-open"></i>
-          <div class="valor"><?= htmlspecialchars($cursos_concluidos) ?></div>
-          <div class="rotulo">Cursos Concluídos</div>
-        </div>
+        <div class="data-card"><i class="fas fa-heart"></i><div class="valor"><?= htmlspecialchars($vidas) ?></div><div class="rotulo">Vidas</div></div>
+        <div class="data-card"><i class="fas fa-fire"></i><div class="valor"><?= htmlspecialchars($streak) ?></div><div class="rotulo">Sequência</div></div>
+        <div class="data-card"><i class="fas fa-gem"></i><div class="valor"><?= htmlspecialchars($moedas) ?></div><div class="rotulo">Gemas</div></div>
+        <div class="data-card"><i class="fas fa-book-open"></i><div class="valor"><?= htmlspecialchars($cursos_concluidos_total) ?></div><div class="rotulo">Cursos Concluídos</div></div>
       </div>
 
+      <!-- SEÇÃO DE CONQUISTAS RESTAURADA -->
       <h3 class="section-titulo">Suas Conquistas</h3>
       <div class="conquistas-grid">
         <?php if (!empty($conquistas_usuario)): ?>
@@ -130,9 +141,69 @@
     </div>
   </div>
 
+  <!-- MODAIS -->
+  <div id="modal-avatar" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button class="modal-fechar" id="fechar-modal-avatar">&times;</button>
+      <h2>Escolha seu novo avatar</h2>
+      <div class="avatar-grid">
+        <?php foreach ($avatares_permitidos as $avatar_item): ?>
+          <img src="<?= htmlspecialchars($avatar_item) ?>" class="avatar-opcao <?= ($avatar_item === $avatar_url) ? 'selecionado' : '' ?>" data-url="<?= htmlspecialchars($avatar_item) ?>">
+        <?php endforeach; ?>
+      </div>
+      <button id="confirmar-avatar" class="botao-salvar">Confirmar</button>
+    </div>
+  </div>
+
+  <div id="modal-delecao" class="modal-overlay hidden">
+    <div class="modal-content">
+      <button class="modal-fechar" id="fechar-modal-delecao">&times;</button>
+      <h2>Deletar Conta</h2>
+      <p>Você tem certeza? Esta ação é irreversível e todo o seu progresso será perdido para sempre.</p>
+      <div class="modal-botoes">
+        <button id="cancelar-delecao" class="botao-cancelar">Cancelar</button>
+        <form method="POST" action="perfil.php" style="display: inline;">
+          <button type="submit" name="deletar_conta_confirmado" class="botao-confirmar-delecao">Sim, deletar minha conta</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script src="JS/trilhas.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      const modalAvatar = document.getElementById('modal-avatar');
+      const modalDelecao = document.getElementById('modal-delecao');
+      const abrirModal = (modal) => modal.classList.remove('hidden');
+      const fecharModal = (modal) => modal.classList.add('hidden');
+
+      document.getElementById('abrir-modal-avatar').addEventListener('click', () => abrirModal(modalAvatar));
+      document.getElementById('fechar-modal-avatar').addEventListener('click', () => fecharModal(modalAvatar));
+      document.getElementById('confirmar-avatar').addEventListener('click', () => fecharModal(modalAvatar));
+      
+      document.getElementById('abrir-modal-delecao').addEventListener('click', () => abrirModal(modalDelecao));
+      document.getElementById('fechar-modal-delecao').addEventListener('click', () => fecharModal(modalDelecao));
+      document.getElementById('cancelar-delecao').addEventListener('click', () => fecharModal(modalDelecao));
+
+      window.addEventListener('click', (e) => {
+        if (e.target === modalAvatar) fecharModal(modalAvatar);
+        if (e.target === modalDelecao) fecharModal(modalDelecao);
+      });
+
+      const avatarGrid = document.querySelector('.avatar-grid');
+      const avatarPrincipalImg = document.getElementById('avatar-principal');
+      const avatarInput = document.getElementById('avatar-selecionado-input');
+
+      avatarGrid.addEventListener('click', function(e) {
+        if (e.target.classList.contains('avatar-opcao')) {
+          avatarGrid.querySelectorAll('.avatar-opcao').forEach(img => img.classList.remove('selecionado'));
+          const selecionado = e.target;
+          selecionado.classList.add('selecionado');
+          avatarInput.value = selecionado.dataset.url;
+          avatarPrincipalImg.src = selecionado.dataset.url;
+        }
+      });
+
       <?php if ($mensagem_sucesso): ?>
         mostrarFeedback(<?= json_encode($mensagem_sucesso) ?>, true);
       <?php endif; ?>
