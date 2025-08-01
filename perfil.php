@@ -10,9 +10,9 @@
 
   // Array de avatares pré-definidos
   $avatares_permitidos = [
-      'imagens/foto_perfil/royalepato.png', 'imagens/foto_perfil/buddhapato.png',
-      'imagens/foto_perfil/counterpato.png', 'https://i.imgur.com/gJk4s5d.png',
-      'imagens/foto_perfil/venompato.png', 'https://i.imgur.com/y1g2f6b.png',
+      'https://i.imgur.com/W8yZNOX.png', 'https://i.imgur.com/K2a2t0X.png',
+      'https://i.imgur.com/t3BvFhT.png', 'https://i.imgur.com/gJk4s5d.png',
+      'https://i.imgur.com/A4RzO9z.png', 'https://i.imgur.com/y1g2f6b.png',
   ];
 
   // 2. PROCESSAMENTO DE FORMULÁRIOS (POST)
@@ -50,10 +50,11 @@
   }
 
   // 3. BUSCAR DADOS DO USUÁRIO
-  $usuario = $pdo->prepare("SELECT nome, avatar, moedas, streak, vidas FROM usuarios WHERE id = ?");
-  $usuario->execute([$usuario_id]);
-  $usuario_data = $usuario->fetch(PDO::FETCH_ASSOC);
+  $usuario_stmt = $pdo->prepare("SELECT nome, avatar, moedas, streak, vidas FROM usuarios WHERE id = ?");
+  $usuario_stmt->execute([$usuario_id]);
+  $usuario_data = $usuario_stmt->fetch(PDO::FETCH_ASSOC);
 
+  // Fallback values
   $nome_usuario_db = $usuario_data['nome'] ?? 'Usuário Devlingo';
   $avatar_url = $usuario_data['avatar'] ?? $avatares_permitidos[0];
   $moedas = $usuario_data['moedas'] ?? 0;
@@ -61,13 +62,21 @@
   $vidas = $usuario_data['vidas'] ?? 3;
 
   // 4. BUSCAR ESTATÍSTICAS (CURSOS E CONQUISTAS)
-  $cursos_concluidos = $pdo->prepare("SELECT COUNT(*) FROM usuario_trilhas WHERE usuario_id = ? AND concluida = 1");
-  $cursos_concluidos->execute([$usuario_id]);
-  $cursos_concluidos_total = $cursos_concluidos->fetchColumn();
+  $cursos_stmt = $pdo->prepare("SELECT COUNT(*) FROM usuario_trilhas WHERE usuario_id = ? AND concluida = 1");
+  $cursos_stmt->execute([$usuario_id]);
+  $cursos_concluidos_total = $cursos_stmt->fetchColumn();
 
-  $conquistas = $pdo->prepare("SELECT c.nome, c.descricao, c.icone FROM usuario_conquistas uc JOIN conquistas c ON uc.conquista_id = c.id WHERE uc.usuario_id = ? ORDER BY uc.data_conquista DESC");
-  $conquistas->execute([$usuario_id]);
-  $conquistas_usuario = $conquistas->fetchAll(PDO::FETCH_ASSOC);
+  // LÓGICA DE CONQUISTAS ATUALIZADA: Busca apenas as conquistas desbloqueadas
+  $user_conquistas_stmt = $pdo->prepare("
+      SELECT c.id, c.nome, c.descricao, c.icone 
+      FROM usuario_conquistas uc
+      JOIN conquistas c ON uc.conquista_id = c.id
+      WHERE uc.usuario_id = ?
+      ORDER BY c.id ASC
+  ");
+  $user_conquistas_stmt->execute([$usuario_id]);
+  $conquistas_desbloqueadas = $user_conquistas_stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
   // 5. MENSAGENS DE FEEDBACK
   $mensagem_sucesso = $_SESSION['sucesso_perfil'] ?? '';
@@ -121,21 +130,20 @@
         <div class="data-card"><i class="fas fa-book-open"></i><div class="valor"><?= htmlspecialchars($cursos_concluidos_total) ?></div><div class="rotulo">Cursos Concluídos</div></div>
       </div>
 
-      <!-- SEÇÃO DE CONQUISTAS RESTAURADA -->
-      <h3 class="section-titulo">Suas Conquistas</h3>
+      <h3 class="section-titulo">Emblemas de Conquista</h3>
       <div class="conquistas-grid">
-        <?php if (!empty($conquistas_usuario)): ?>
-            <?php foreach ($conquistas_usuario as $conquista): ?>
-                <div class="conquista-card">
-                    <i class="<?= htmlspecialchars($conquista['icone']) ?> icon-conquista"></i>
-                    <h4><?= htmlspecialchars($conquista['nome']) ?></h4>
-                    <p><?= htmlspecialchars($conquista['descricao']) ?></p>
+        <?php if (!empty($conquistas_desbloqueadas)): ?>
+            <?php foreach ($conquistas_desbloqueadas as $conquista): ?>
+                <div class="emblema-conquista desbloqueada">
+                    <img src="<?= htmlspecialchars($conquista['icone']) ?>" alt="<?= htmlspecialchars($conquista['nome']) ?>">
+                    <div class="tooltip-conquista">
+                        <h4><?= htmlspecialchars($conquista['nome']) ?></h4>
+                        <p><?= htmlspecialchars($conquista['descricao']) ?></p>
+                    </div>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
-            <p class="sem-conquistas">
-                Você ainda não desbloqueou nenhuma conquista. Continue aprendendo!
-            </p>
+            <p class="sem-conquistas">Você ainda não desbloqueou nenhuma conquista. Continue aprendendo!</p>
         <?php endif; ?>
       </div>
     </div>

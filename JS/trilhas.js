@@ -22,8 +22,64 @@ const TEMPO_TOTAL_RECARGA = 5; // 60 segundos
 document.addEventListener('DOMContentLoaded', () => {
   carregarEstadoInicial();
   carregarTrilhas();
-  carregarMissoesDiarias(); // <- NOVA FUNÇÃO
+  carregarMissoesDiarias();
 });
+
+
+// ===============================================
+// LÓGICA DE CONQUISTAS (NOVO)
+// ===============================================
+
+/**
+ * Envia um evento para o servidor para verificar se alguma conquista foi desbloqueada.
+ * @param {string} evento - O tipo de evento (ex: 'ACERTOU_RESPOSTA').
+ * @param {object} detalhes - Dados adicionais sobre o evento.
+ */
+async function verificarConquistas(evento, detalhes = {}) {
+    try {
+        await fetch('verificar_conquista.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ evento, detalhes }),
+        });
+    } catch (error) {
+        console.error('Erro ao verificar conquistas:', error);
+    }
+}
+
+/**
+ * Exibe a notificação de nova conquista.
+ * @param {string} icone - Classe do ícone Font Awesome.
+ * @param {string} nome - Nome da conquista.
+ * @param {string} descricao - Descrição da conquista.
+ */
+function mostrarNotificacaoConquista(icone, nome, descricao) {
+    const container = document.getElementById('notificacao-container');
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="notificacao-conquista" id="notificacao-toast">
+            <div class="notificacao-conquista-icone">
+                <i class="${icone}"></i>
+            </div>
+            <div class="notificacao-conquista-conteudo">
+                <h4>${nome}</h4>
+                <p>${descricao}</p>
+            </div>
+        </div>
+    `;
+
+    const toast = document.getElementById('notificacao-toast');
+    // Força o reflow para a animação funcionar
+    setTimeout(() => {
+        toast.classList.add('visivel');
+    }, 10);
+
+    // Esconde a notificação após 5 segundos
+    setTimeout(() => {
+        toast.classList.remove('visivel');
+    }, 5000);
+}
 
 
 // ===============================================
@@ -91,7 +147,7 @@ async function salvarProgresso() {
 }
 
 // ===============================================
-// LÓGICA DE MISSÕES (NOVO BLOCO)
+// LÓGICA DE MISSÕES
 // ===============================================
 
 async function carregarMissoesDiarias() {
@@ -153,7 +209,6 @@ async function notificarProgressoMissao(tipo_evento) {
             });
             moedas += totalGemas;
             atualizarMoedas();
-            // Recarrega as missões para mostrar o status "concluído"
             setTimeout(carregarMissoesDiarias, 1500);
         }
     } catch (error) {
@@ -194,7 +249,7 @@ function atualizarMoedas() {
 // ===============================================
 // LÓGICA DE JOGO E RESPOSTAS
 // ===============================================
-function verificarRespostaMultiplaEscolha(correta) {
+function verificarRespostaMultiplaEscolha(correta, opcaoSelecionadaTexto) {
   const opcaoSelecionada = event.currentTarget;
   document.querySelectorAll('.opcao').forEach(btn => btn.disabled = true);
 
@@ -206,8 +261,8 @@ function verificarRespostaMultiplaEscolha(correta) {
     atualizarStreak();
     atualizarMoedas();
     salvarProgresso();
-    // Notifica progresso de missão do tipo "ACERTAR_PERGUNTA"
     notificarProgressoMissao('ACERTAR_PERGUNTA');
+    verificarConquistas('ACERTOU_RESPOSTA'); // <-- VERIFICA CONQUISTAS
     setTimeout(() => {
       perguntaAtual++;
       exibirPerguntaAtual();
@@ -218,6 +273,15 @@ function verificarRespostaMultiplaEscolha(correta) {
     streak = 0;
     atualizarStreak();
     aplicarDano();
+    // VERIFICA CONQUISTAS DE ERRO
+    const detalhes = { pergunta_ordem: perguntaAtual + 1 };
+    verificarConquistas('ERROU_RESPOSTA', detalhes);
+
+    // Conquista "Boas Práticas"
+    if (opcaoSelecionadaTexto === 'Boas Práticas') {
+        verificarConquistas('ESCOLHEU_BOAS_PRATICAS');
+    }
+
     setTimeout(() => {
       opcaoSelecionada.classList.remove('incorreta');
       document.querySelectorAll('.opcao').forEach(btn => btn.disabled = false);
@@ -248,8 +312,8 @@ function verificarRespostaLacuna() {
     atualizarStreak();
     atualizarMoedas();
     salvarProgresso();
-    // Notifica progresso de missão do tipo "ACERTAR_PERGUNTA"
     notificarProgressoMissao('ACERTAR_PERGUNTA');
+    verificarConquistas('ACERTOU_RESPOSTA'); // <-- VERIFICA CONQUISTAS
     setTimeout(() => {
       perguntaAtual++;
       exibirPerguntaAtual();
@@ -259,6 +323,9 @@ function verificarRespostaLacuna() {
     streak = 0;
     atualizarStreak();
     aplicarDano();
+    // VERIFICA CONQUISTAS DE ERRO
+    const detalhes = { pergunta_ordem: perguntaAtual + 1 };
+    verificarConquistas('ERROU_RESPOSTA', detalhes);
     setTimeout(() => {
         lacunas.forEach(lacuna => {
             lacuna.classList.remove('incorreta', 'correta');
@@ -276,6 +343,7 @@ function aplicarDano() {
   setTimeout(() => document.body.classList.remove('dano-effect'), 500);
   salvarProgresso();
   if (vidas <= 0) {
+    verificarConquistas('PERDEU_TODAS_AS_VIDAS'); // <-- VERIFICA CONQUISTA GAME OVER
     iniciarRecargaVidas();
   }
 }
@@ -448,7 +516,8 @@ function exibirPerguntaAtual() {
         </div>
       </div>`;
     container.querySelectorAll('.opcao').forEach(botao => {
-      botao.addEventListener('click', () => verificarRespostaMultiplaEscolha(botao.getAttribute('data-opcao') === respostaCorreta));
+      const opcaoTexto = botao.getAttribute('data-opcao');
+      botao.addEventListener('click', () => verificarRespostaMultiplaEscolha(opcaoTexto === respostaCorreta, opcaoTexto));
     });
   }
 }
@@ -492,7 +561,6 @@ function exibirResultadoFinal() {
       </div>
     </div>`;
 
-  // Notifica que uma lição foi concluída para a missão
   notificarProgressoMissao('CONCLUIR_LICAO');
 }
 
@@ -504,5 +572,5 @@ function mostrarFeedback(mensagem, sucesso) {
   setTimeout(() => {
     feedback.classList.add('fadeOutUp');
     setTimeout(() => feedback.remove(), 500);
-  }, 3000); // Aumentado para 3 segundos para dar tempo de ler a recompensa
+  }, 3000);
 }

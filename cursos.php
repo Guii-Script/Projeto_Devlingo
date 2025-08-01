@@ -125,5 +125,6 @@ unset($_SESSION['mensagem_cursos']);
       }
     });
   </script>
+  <script src="JS/trilhas.js"></script>
 </body>
 </html>

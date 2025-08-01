@@ -1,9 +1,20 @@
 <?php
-// Este arquivo de cabeçalho (header.php) espera que $avatar_url já esteja definida
-// na página que o inclui. Se $avatar_url não estiver definida, ele usará um valor padrão.
+// Lógica para verificar se há uma nova conquista na sessão
+$nova_conquista = $_SESSION['nova_conquista'] ?? null;
+if ($nova_conquista) {
+    unset($_SESSION['nova_conquista']); // Limpa para não mostrar de novo
+}
 
+// Lógica do avatar aprimorada: se não estiver definida, busca no banco
 if (!isset($avatar_url)) {
-    $avatar_url = 'https://i.imgur.com/W8yZNOX.png'; // Avatar padrão
+    if (isset($_SESSION['usuario_id']) && isset($pdo)) {
+        $stmt_avatar = $pdo->prepare("SELECT avatar FROM usuarios WHERE id = ?");
+        $stmt_avatar->execute([$_SESSION['usuario_id']]);
+        $result = $stmt_avatar->fetch(PDO::FETCH_ASSOC);
+        $avatar_url = $result['avatar'] ?? 'https://i.imgur.com/W8yZNOX.png';
+    } else {
+        $avatar_url = 'https://i.imgur.com/W8yZNOX.png'; // Padrão
+    }
 }
 ?>
 <style>
@@ -17,7 +28,7 @@ if (!isset($avatar_url)) {
         --cor-borda: rgba(46, 242, 170, 0.2);
     }
 
-    /* Reset e Estilos Globais (essenciais para o header funcionar corretamente) */
+    /* Reset e Estilos Globais */
     * {
         box-sizing: border-box;
         margin: 0;
@@ -27,28 +38,11 @@ if (!isset($avatar_url)) {
 
     body {
         color: var(--cor-texto);
-        background-color: var(--cor-fundo); /* Manter para consistência */
+        background-color: var(--cor-fundo);
         min-height: 100vh;
-        overflow-x: hidden; /* Manter para evitar scroll horizontal indesejado */
+        overflow-x: hidden;
         line-height: 1.6;
-        padding-top: 72px; /* Espaço para o header fixo, importante aqui */
-    }
-
-    /* Animations (apenas as usadas pelo header e elements globais) */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-
-    @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(100%); }
+        padding-top: 72px;
     }
 
     /* Header Profissional */
@@ -90,10 +84,9 @@ if (!isset($avatar_url)) {
 
     .logo i {
         font-size: 1.8rem;
-        color: var(--cor-primaria); /* Usando var(--cor-primaria) ao invés de animation: pulse */
+        color: var(--cor-primaria);
     }
 
-    /* Centraliza a navegação */
     .header-content nav {
         display: flex;
         align-items: center;
@@ -101,7 +94,6 @@ if (!isset($avatar_url)) {
         justify-content: center;
     }
 
-    /* Estilos para o novo container do avatar e SAIR */
     .user-actions {
         display: flex;
         align-items: center;
@@ -109,7 +101,6 @@ if (!isset($avatar_url)) {
         flex-shrink: 0;
     }
 
-    /* Links de navegação */
     nav a {
         color: var(--cor-texto);
         text-decoration: none;
@@ -142,7 +133,6 @@ if (!isset($avatar_url)) {
         width: 100%;
     }
 
-    /* Estilos para o avatar */
     .avatar {
         width: 40px;
         height: 40px;
@@ -158,7 +148,6 @@ if (!isset($avatar_url)) {
         box-shadow: 0 0 15px var(--cor-primaria);
     }
 
-    /* Estilo para o link de logout */
     .logout-link {
         color: var(--cor-texto);
         text-decoration: none;
@@ -260,3 +249,23 @@ if (!isset($avatar_url)) {
         </div>
     </div>
 </header>
+
+<!-- Container para a notificação de conquista (NOVO) -->
+<div id="notificacao-container" class="notificacao-conquista-overlay"></div>
+
+<!-- Script para exibir a notificação se houver uma (NOVO) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    <?php if ($nova_conquista): ?>
+        // A função mostrarNotificacaoConquista está em trilhas.js
+        // É importante que trilhas.js seja carregado em todas as páginas para isso funcionar
+        if (typeof mostrarNotificacaoConquista === 'function') {
+            mostrarNotificacaoConquista(
+                '<?= htmlspecialchars($nova_conquista['icone']) ?>',
+                '<?= htmlspecialchars($nova_conquista['nome']) ?>',
+                '<?= htmlspecialchars($nova_conquista['descricao']) ?>'
+            );
+        }
+    <?php endif; ?>
+});
+</script>
