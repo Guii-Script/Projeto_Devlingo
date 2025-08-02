@@ -10,9 +10,9 @@
 
   // Array de avatares pré-definidos
   $avatares_permitidos = [
-      'https://i.imgur.com/W8yZNOX.png', 'https://i.imgur.com/K2a2t0X.png',
-      'https://i.imgur.com/t3BvFhT.png', 'https://i.imgur.com/gJk4s5d.png',
-      'https://i.imgur.com/A4RzO9z.png', 'https://i.imgur.com/y1g2f6b.png',
+      'imagens/foto_perfil/buddhapato.png', 'imagens/foto_perfil/venompato.png',
+      'imagens/foto_perfil/counterpato.png', 'imagens/foto_perfil/patofeliz.png',
+      'imagens/foto_perfil/royalepato.png', 'https://i.imgur.com/y1g2f6b.png',
   ];
 
   // 2. PROCESSAMENTO DE FORMULÁRIOS (POST)
