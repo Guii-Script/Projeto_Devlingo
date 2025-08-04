@@ -1,6 +1,7 @@
 <?php
 // Lógica para verificar se há uma nova conquista na sessão
-$nova_conquista = $_SESSION['nova_conquista'] ?? null;
+// Correção para compatibilidade com PHP < 7: substituindo '??' por 'isset()'
+$nova_conquista = isset($_SESSION['nova_conquista']) ? $_SESSION['nova_conquista'] : null;
 if ($nova_conquista) {
     unset($_SESSION['nova_conquista']); // Limpa para não mostrar de novo
 }
@@ -11,7 +12,8 @@ if (!isset($avatar_url)) {
         $stmt_avatar = $pdo->prepare("SELECT avatar FROM usuarios WHERE id = ?");
         $stmt_avatar->execute([$_SESSION['usuario_id']]);
         $result = $stmt_avatar->fetch(PDO::FETCH_ASSOC);
-        $avatar_url = $result['avatar'] ?? 'https://i.imgur.com/W8yZNOX.png';
+        // Correção para compatibilidade com PHP < 7
+        $avatar_url = isset($result['avatar']) ? $result['avatar'] : 'https://i.imgur.com/W8yZNOX.png';
     } else {
         $avatar_url = 'https://i.imgur.com/W8yZNOX.png'; // Padrão
     }

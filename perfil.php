@@ -19,8 +19,8 @@
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // --- ATUALIZAR NOME E AVATAR ---
       if (isset($_POST['salvar_perfil'])) {
-          $novo_nome = trim($_POST['nome'] ?? '');
-          $novo_avatar = $_POST['avatar'] ?? '';
+          $novo_nome = trim(isset($_POST['nome']) ? $_POST['nome'] : '');
+          $novo_avatar = isset($_POST['avatar']) ? $_POST['avatar'] : '';
 
           if (!empty($novo_nome)) {
               $pdo->prepare("UPDATE usuarios SET nome = ? WHERE id = ?")->execute([$novo_nome, $usuario_id]);
@@ -55,11 +55,11 @@
   $usuario_data = $usuario_stmt->fetch(PDO::FETCH_ASSOC);
 
   // Fallback values
-  $nome_usuario_db = $usuario_data['nome'] ?? 'Usuário Devlingo';
-  $avatar_url = $usuario_data['avatar'] ?? $avatares_permitidos[0];
-  $moedas = $usuario_data['moedas'] ?? 0;
-  $streak = $usuario_data['streak'] ?? 0;
-  $vidas = $usuario_data['vidas'] ?? 3;
+  $nome_usuario_db = isset($usuario_data['nome']) ? $usuario_data['nome'] : 'Usuário Devlingo';
+  $avatar_url = isset($usuario_data['avatar']) ? $usuario_data['avatar'] : $avatares_permitidos[0];
+  $moedas = isset($usuario_data['moedas']) ? $usuario_data['moedas'] : 0;
+  $streak = isset($usuario_data['streak']) ? $usuario_data['streak'] : 0;
+  $vidas = isset($usuario_data['vidas']) ? $usuario_data['vidas'] : 3;
 
   // 4. BUSCAR ESTATÍSTICAS (CURSOS E CONQUISTAS)
   $cursos_stmt = $pdo->prepare("SELECT COUNT(*) FROM usuario_trilhas WHERE usuario_id = ? AND concluida = 1");
@@ -79,8 +79,8 @@
 
 
   // 5. MENSAGENS DE FEEDBACK
-  $mensagem_sucesso = $_SESSION['sucesso_perfil'] ?? '';
-  $mensagem_erro = $_SESSION['erro_perfil'] ?? '';
+  $mensagem_sucesso = isset($_SESSION['sucesso_perfil']) ? $_SESSION['sucesso_perfil'] : '';
+  $mensagem_erro = isset($_SESSION['erro_perfil']) ? $_SESSION['erro_perfil'] : '';
   unset($_SESSION['sucesso_perfil'], $_SESSION['erro_perfil']);
 ?>
 <!DOCTYPE html>
