@@ -1,90 +1,82 @@
 <?php
-  // Inclui a configuração centralizada (inicia a sessão e conecta ao banco)
   require_once 'includes/config.php';
 
-  // Verifica se o usuário está logado, senão, redireciona
   if (!isset($_SESSION['usuario_id'])) {
       header('Location: login.php');
       exit();
   }
 
-  $usuario_id = $_SESSION['usuario_id']; // Define usuario_id para uso
+  $usuario_id = $_SESSION['usuario_id'];
 
-  // Busca os dados atuais do usuário, incluindo a coluna tempo_recarga e avatar
   $stmt = $pdo->prepare("SELECT vidas, streak, moedas, tempo_recarga, avatar FROM usuarios WHERE id = ?");
-  $stmt->execute([$_SESSION['usuario_id']]);
+  $stmt->execute([$usuario_id]);
   $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-  // Define as variáveis que serão usadas no HTML, usando isset() para compatibilidade PHP < 7.0
+  // Fallback para garantir que as variáveis sempre existam
   $vidas = isset($usuario['vidas']) ? $usuario['vidas'] : 3;
   $streak = isset($usuario['streak']) ? $usuario['streak'] : 0;
   $moedas = isset($usuario['moedas']) ? $usuario['moedas'] : 0;
   $tempo_recarga = isset($usuario['tempo_recarga']) ? $usuario['tempo_recarga'] : null;
-
-  // Define a variável $avatar_url para o header.php
-  $avatar_url = isset($usuario['avatar']) ? $usuario['avatar'] : 'https://i.imgur.com/W8yZNOX.png';
+  $avatar_url = isset($usuario['avatar']) ? $usuario['avatar'] : 'imagens/foto_perfil/buddhapato.png';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <?php include 'includes/head.php'; ?>
   <title>Devlingo - Trilhas</title>
   <link rel="stylesheet" href="CSS/trilhas.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <div id="gameOverOverlay" class="game-over-overlay hidden">
-      <div class="game-over-box">
-          <h1 class="game-over-text">GAME OVER</h1>
-          <p class="game-over-subtext">Suas vidas recarregarão em:</p>
-          <div id="gameOverTimer" class="game-over-timer">01:00</div>
+  <div id="overlay-game-over" class="overlay-game-over escondido">
+      <div class="caixa-game-over">
+          <h1 class="texto-game-over">GAME OVER</h1>
+          <p>Suas vidas recarregarão em:</p>
+          <div id="timer-game-over" class="timer-game-over">05:00</div>
       </div>
   </div>
 
   <?php include_once 'includes/header.php'; ?>
 
-  <div class="main-container">
-    <aside class="sidebar">
-      <div class="sidebar-content">
-        <div id="listaTrilhas" class="trilhas-menu"></div>
-      </div>
+  <div class="container-principal">
+    <aside class="barra-lateral">
+        <div id="lista-trilhas" class="menu-trilhas">
+            <!-- As trilhas do usuário serão carregadas aqui pelo JS -->
+        </div>
     </aside>
 
-    <main class="content">
-      <section id="conteudoTrilha" class="trilha-content"></section>
+    <main class="conteudo">
+      <section id="conteudo-trilha" class="conteudo-trilha">
+        <!-- O conteúdo da trilha/pergunta será carregado aqui pelo JS -->
+      </section>
 
-      <section class="missions">
-        <div class="status-container">
+      <aside class="missoes">
+        <div class="container-status">
           <div class="status-jogador"
-               data-vidas="<?php echo $vidas; ?>"
-               data-streak="<?php echo $streak; ?>"
-               data-moedas="<?php echo $moedas; ?>"
-               data-tempo-recarga="<?php echo htmlspecialchars($tempo_recarga); ?>">
+               data-vidas="<?= $vidas; ?>"
+               data-streak="<?= $streak; ?>"
+               data-moedas="<?= $moedas; ?>"
+               data-tempo-recarga="<?= htmlspecialchars($tempo_recarga); ?>">
 
-            <div class="status-item">
+            <div class="item-status">
               <span class="icone"><i class="fas fa-heart"></i></span>
-              <span id="vidas"><?php echo $vidas; ?></span>
+              <span id="vidas"><?= $vidas; ?></span>
             </div>
-            <div class="status-item">
+            <div class="item-status">
               <span class="icone"><i class="fas fa-fire"></i></span>
-              <span id="streak"><?php echo $streak; ?></span>
+              <span id="streak"><?= $streak; ?></span>
             </div>
-            <div class="status-item">
+            <div class="item-status">
               <span class="icone"><i class="fas fa-gem"></i></span>
-              <span id="moedas"><?php echo $moedas; ?></span>
+              <span id="moedas"><?= $moedas; ?></span>
             </div>
           </div>
 
-          <div id="missoesDiariasContainer">
-            </div>
-
-
+          <div id="container-missoes-diarias">
+            <!-- As missões serão carregadas aqui pelo JS -->
+          </div>
         </div>
-      </section>
+      </aside>
     </main>
   </div>
 

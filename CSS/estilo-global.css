@@ -1,0 +1,139 @@
+/* CSS/estilo-global.css */
+/* Este arquivo centraliza todos os estilos comuns do projeto. */
+
+:root {
+    --cor-primaria: #2EF2AA;
+    --cor-secundaria: #0f2b40;
+    --cor-fundo: #01080D;
+    --cor-texto: #ffffff;
+    --cor-destaque: #25d895;
+    --cor-card: #0a1620;
+    --cor-borda: rgba(46, 242, 170, 0.2);
+    --cor-erro: #ff6b6b;
+}
+
+/* --- RESET E ESTILOS GLOBAIS --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    color: var(--cor-texto);
+    background-color: var(--cor-fundo);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+    padding-top: 72px; /* Espaço para o header fixo */
+}
+
+/* --- ESTILOS DO HEADER (Centralizados) --- */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 72px;
+    z-index: 1000;
+    background-color: rgba(10, 22, 32, 0.98);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.conteudo-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cor-primaria);
+    text-decoration: none;
+}
+
+.logo i {
+    font-size: 1.8rem;
+}
+
+.conteudo-cabecalho nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.acoes-usuario {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+nav a {
+    color: var(--cor-texto);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s ease;
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+nav a:hover {
+    color: var(--cor-primaria);
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--cor-primaria);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px var(--cor-primaria);
+}
+
+.link-logout {
+    color: var(--cor-texto);
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.link-logout:hover {
+    color: var(--cor-erro);
+}
+
+/* --- RESPONSIVIDADE DO HEADER --- */
+@media (max-width: 768px) {
+    body { padding-top: 120px; }
+    header { height: auto; }
+    .conteudo-cabecalho { flex-direction: column; gap: 1rem; padding: 0.5rem 0; }
+    .conteudo-cabecalho nav { order: 3; width: 100%; justify-content: center; }
+    .logo { order: 1; }
+    .acoes-usuario { order: 2; }
+    nav a span { display: none; }
+}
