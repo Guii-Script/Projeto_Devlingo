@@ -1,8 +1,8 @@
 <?php
-require_once 'includes/config.php'; // Usa a conexão centralizada
+require_once 'includes/config.php';
 
 $erro = '';
-$login_sucesso = false; // Variável para controlar a animação
+$login_sucesso = false;
 
 if (isset($_SESSION['usuario_id'])) {
     header('Location: trilhas.php');
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($usuario && password_verify($senha, $usuario['senha'])) {
             $_SESSION['usuario_id'] = $usuario['id'];
-            $login_sucesso = true; // Define como sucesso para o JS
+            $login_sucesso = true;
         } else {
             $erro = 'E-mail ou senha incorretos.';
         }
@@ -37,6 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="CSS/login.css"/>
 </head>
 <body>
+  <!-- Fundo animado restaurado -->
+  <div id="particulas-fundo" class="particulas-fundo"></div>
+
   <div id="container-login" class="container-login">
     <div class="logo-login">
       <i class="fas fa-code"></i>
@@ -74,7 +77,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const formLogin = document.getElementById('form-login');
     const botaoLogin = document.getElementById('botao-login');
 
-    // FUNÇÃO DE CONFETES RESTAURADA
+    // FUNÇÃO PARA CRIAR PARTÍCULAS (RESTAURADA)
+    function criarParticulas() {
+        const container = document.getElementById('particulas-fundo');
+        if (!container) return;
+        const particleCount = 20;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particula = document.createElement('div');
+            particula.classList.add('particula');
+            
+            const size = Math.random() * 4 + 2;
+            particula.style.width = `${size}px`;
+            particula.style.height = `${size}px`;
+            particula.style.left = `${Math.random() * 100}%`;
+            particula.style.top = `${Math.random() * 100}%`;
+            particula.style.animationDelay = `${Math.random() * 10}s`;
+            particula.style.animationDuration = `${Math.random() * 10 + 5}s`;
+            
+            container.appendChild(particula);
+        }
+    }
+
+    // FUNÇÃO DE CONFETES
     function lancarConfetes() {
         const container = document.getElementById('container-login');
         if (!container) return;
@@ -86,8 +111,9 @@ document.addEventListener('DOMContentLoaded', function() {
             confete.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
             confete.style.left = Math.random() * 100 + '%';
             confete.style.animationDelay = Math.random() * 2 + 's';
-            confete.style.width = Math.random() * 10 + 5 + 'px';
-            confete.style.height = confete.style.width;
+            const size = Math.random() * 8 + 4;
+            confete.style.width = `${size}px`;
+            confete.style.height = `${size}px`;
 
             container.appendChild(confete);
 
@@ -96,24 +122,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 3000);
         }
     }
+    
+    // INICIALIZA AS PARTÍCULAS
+    criarParticulas();
 
-    // Verifica se o login foi bem-sucedido para disparar a animação
     <?php if ($login_sucesso): ?>
         lancarConfetes();
         botaoLogin.textContent = 'SUCESSO!';
-        // Redireciona após a animação
         setTimeout(() => {
             window.location.href = 'trilhas.php';
         }, 1500);
     <?php endif; ?>
 
     formLogin.addEventListener('submit', function(e) {
-        // Se o login já foi validado com sucesso, impede o reenvio do formulário
         if (<?php echo $login_sucesso ? 'true' : 'false'; ?>) {
             e.preventDefault();
             return;
         }
-        // Caso contrário, mostra o estado de carregamento
         botaoLogin.disabled = true;
         botaoLogin.textContent = 'ENTRANDO...';
     });
