@@ -41,21 +41,4 @@ if (!isset($avatar_url)) {
         </div>
     </div>
 </header>
-
-<!-- Container para a notificação de conquista -->
-<div id="notificacao-container" class="notificacao-conquista-overlay"></div>
-
-<!-- Script para exibir a notificação se houver uma -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    <?php if ($nova_conquista): ?>
-        if (typeof mostrarNotificacaoConquista === 'function') {
-            mostrarNotificacaoConquista(
-                '<?= htmlspecialchars($nova_conquista['icone']) ?>',
-                '<?= htmlspecialchars($nova_conquista['nome']) ?>',
-                '<?= htmlspecialchars($nova_conquista['descricao']) ?>'
-            );
-        }
-    <?php endif; ?>
-});
 </script>

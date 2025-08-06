@@ -12,7 +12,6 @@
   $stmt->execute([$usuario_id]);
   $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-  // Fallback para garantir que as variáveis sempre existam
   $vidas = isset($usuario['vidas']) ? $usuario['vidas'] : 3;
   $streak = isset($usuario['streak']) ? $usuario['streak'] : 0;
   $moedas = isset($usuario['moedas']) ? $usuario['moedas'] : 0;
@@ -40,15 +39,11 @@
 
   <div class="container-principal">
     <aside class="barra-lateral">
-        <div id="lista-trilhas" class="menu-trilhas">
-            <!-- As trilhas do usuário serão carregadas aqui pelo JS -->
-        </div>
+        <div id="lista-trilhas" class="menu-trilhas"></div>
     </aside>
 
     <main class="conteudo">
-      <section id="conteudo-trilha" class="conteudo-trilha">
-        <!-- O conteúdo da trilha/pergunta será carregado aqui pelo JS -->
-      </section>
+      <section id="conteudo-trilha" class="conteudo-trilha"></section>
 
       <aside class="missoes">
         <div class="container-status">
@@ -72,9 +67,7 @@
             </div>
           </div>
 
-          <div id="container-missoes-diarias">
-            <!-- As missões serão carregadas aqui pelo JS -->
-          </div>
+          <div id="container-missoes-diarias"></div>
         </div>
       </aside>
     </main>

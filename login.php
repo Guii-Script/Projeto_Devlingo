@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const formLogin = document.getElementById('form-login');
     const botaoLogin = document.getElementById('botao-login');
 
-    // FUNÇÃO PARA CRIAR PARTÍCULAS (RESTAURADA)
+    // FUNÇÃO PARA CRIAR PARTÍCULAS 
     function criarParticulas() {
         const container = document.getElementById('particulas-fundo');
         if (!container) return;

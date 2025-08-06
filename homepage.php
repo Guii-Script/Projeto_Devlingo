@@ -331,16 +331,6 @@
     window.addEventListener('load', checkVisibility);
     window.addEventListener('load', animateProgressBars);
 
-    // Suavizar scroll para links internos
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-          behavior: 'smooth'
-        });
-      });
-    });
   </script>
 </body>
 </html>
