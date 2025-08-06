@@ -10,7 +10,7 @@
   $avatares_permitidos = [
       'imagens/foto_perfil/buddhapato.png', 'imagens/foto_perfil/venompato.png',
       'imagens/foto_perfil/counterpato.png', 'imagens/foto_perfil/patofeliz.png',
-      'imagens/foto_perfil/royalepato.png', 'https://i.imgur.com/y1g2f6b.png',
+      'imagens/foto_perfil/royalepato.png', 'imagens/foto_perfil/patoboia.png',
   ];
 
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
