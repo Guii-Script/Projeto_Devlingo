@@ -109,14 +109,81 @@ body {
 .barra-progresso { height: 100%; background: linear-gradient(90deg, var(--cor-primaria), var(--cor-destaque)); border-radius: 3px; transition: width 0.5s ease; }
 .info-pergunta { display: flex; justify-content: space-between; font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); }
 
-/* Múltipla Escolha */
-.enunciado { font-size: 1.2rem; margin-bottom: 2rem; color: var(--cor-texto); line-height: 1.8; }
-.opcoes-resposta { display: grid; grid-template-columns: 1fr; gap: 0.8rem; }
-.opcao { background: rgba(15, 43, 64, 0.5); border: 1px solid var(--cor-borda); border-radius: 8px; padding: 1rem 1.5rem; cursor: pointer; color: var(--cor-texto); text-align: left; transition: all 0.3s ease; }
-.opcao:hover { background: rgba(46, 242, 170, 0.1); border-color: var(--cor-primaria); }
-.opcao:disabled { cursor: not-allowed; }
-.opcao.correta { background: rgba(46, 242, 170, 0.3); border-color: var(--cor-primaria); animation: pulse 0.5s; }
-.opcao.incorreta { background: rgba(242, 46, 46, 0.3); border-color: var(--cor-erro); animation: tremer 0.3s; }
+/* --- Animação de Feixe de Luz (Shimmer) --- */
+@keyframes shimmerEffect {
+  0% {
+    transform: translateX(-150%) skewX(-30deg);
+  }
+  100% {
+    transform: translateX(150%) skewX(-30deg);
+  }
+}
+
+/* --- Estilos das Opções de Resposta (Versão Gamificada) --- */
+.opcoes-resposta {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+}
+
+.opcao {
+  background: rgba(15, 43, 64, 0.5);
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  color: var(--cor-texto);
+  text-align: left;
+  position: relative; /* Essencial para o efeito shimmer */
+  overflow: hidden;   /* Esconde o feixe de luz fora do botão */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Pseudo-elemento que cria o feixe de luz */
+.opcao::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: translateX(-150%) skewX(-30deg); /* Começa fora da tela */
+  transition: none;
+}
+
+/* ANIMAÇÃO GAMIFICADA NO HOVER */
+.opcao:hover:not(:disabled) {
+  transform: translateY(-5px); /* Efeito de levitar */
+  border-color: var(--cor-primaria);
+  /* Usa a animação de borda pulsante que você já tem! */
+  animation: pulseBorder 1.2s infinite; 
+}
+
+/* Ativa o feixe de luz no hover */
+.opcao:hover:not(:disabled)::before {
+  animation: shimmerEffect 0.85s ease-in-out 1;
+}
+
+/* Estados do botão */
+.opcao:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.opcao.correta {
+  background: rgba(46, 242, 170, 0.3);
+  border-color: var(--cor-primaria);
+  animation: pulse 0.5s;
+}
+
+.opcao.incorreta {
+  background: rgba(242, 46, 46, 0.3);
+  border-color: var(--cor-erro);
+  animation: tremer 0.3s;
+}
+
+
 
 /* Arrastar Palavras */
 .enunciado-arrastar { font-size: 1.2rem; line-height: 1.8; margin-bottom: 2rem; color: var(--cor-texto); }
