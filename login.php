@@ -68,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     <div class="links-login">
       <a href="cadastro.php" class="link-login">Primeiro acesso? Cadastre-se</a>
-      <a href="#" class="link-login">Esqueceu sua senha?</a>
     </div>
   </div>
 

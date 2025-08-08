@@ -119,10 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <span>ou</span>
     </div>
     
-    <button type="button" class="botao-google">
-      <i class="fab fa-google"></i> Cadastre-se com Google
-    </button>
-    
     <div class="cadastro-links">
       <a href="login.php" class="cadastro-link">Já tem uma conta? Faça login</a>
     </div>
